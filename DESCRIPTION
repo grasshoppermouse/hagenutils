@@ -1,0 +1,19 @@
+Package: hagenutils
+Title: Plots, tables, and inlines for knitr
+Version: 0.0.0.9004
+Authors@R: person("Ed", "Hagen", email = "ehagen@gmail.com", role = c("aut", "cre"))
+Description: forestplot: creates a ggplot forestplot object and corresponding
+    data frame of coefficients that can be included in rmarkdown using kable.
+    inline_ttest formats results of a t-test for inclusion in rmarkdown.
+    custom.summarize creates a table of summary stats, optionally by subsets.
+    predicted_probability computes the predicted probability for a logistic
+    regression model.
+Depends: R (>= 3.1.0)
+License: CC_BY
+Imports: broom, dplyr, ggplot2, reshape2, ggalt
+LazyData: true
+RoxygenNote: 6.0.1
+NeedsCompilation: no
+Packaged: 2019-03-08 18:34:02 UTC; hagen
+Author: Ed Hagen [aut, cre]
+Maintainer: Ed Hagen <ehagen@gmail.com>
