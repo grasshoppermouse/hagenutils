@@ -160,7 +160,7 @@ svysmooth2df <-
 #' @description ggplot version of base::dotchart
 #' @param v A named vector, e.g., a table
 #' @return a ggplot object
-#' @details DETAILS
+#' @details Uses theme_minimal, and no axis labels.
 #' @examples 
 #' \dontrun{
 #' if(interactive()){
