@@ -1,4 +1,6 @@
 
+library(tidyverse)
+
 #' Predicted probability from svyglm model and new data, along with 95\% CI.
 #'
 #' @param mod A svyglm model object.
@@ -152,3 +154,29 @@ svysmooth2df <-
 
     return(df)
   }
+
+
+#' @title ggdotchart
+#' @description ggplot version of base::dotchart
+#' @param v A named vector, e.g., a table
+#' @return a ggplot object
+#' @details DETAILS
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  ggdotchart(table(mtcars$cyl))
+#'  }
+#' }
+#' @rdname ggdotchart
+#' @export
+ggdotchart <- function(v){
+  nms <- names(v)
+  tibble(
+    x = as.numeric(v),
+    y = factor(nms, levels = nms[order(v)])
+  ) %>%
+    ggplot(aes(x, y)) +
+    geom_point(size = 3) +
+    labs(x = "", y = "") +
+    theme_minimal(15)
+}
