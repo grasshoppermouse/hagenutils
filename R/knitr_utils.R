@@ -163,7 +163,7 @@ logistic_forestplot <- function(...,
                                 breaks = NULL,
                                 intercept = T,
                                 sig = 3) {
-  library(binomTools)
+  # library(binomTools)
   models <- list(...)
 
   chisqr <- function(m) {
