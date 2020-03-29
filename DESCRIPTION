@@ -12,8 +12,9 @@ Depends: R (>= 3.1.0)
 License: CC_BY
 Imports: broom, dplyr, ggplot2, reshape2, ggalt
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 7.1.0
 NeedsCompilation: no
 Packaged: 2019-03-08 18:34:02 UTC; hagen
 Author: Ed Hagen [aut, cre]
 Maintainer: Ed Hagen <ehagen@gmail.com>
+Encoding: UTF-8

@@ -4,8 +4,16 @@
 \alias{forestplot}
 \title{Create a forest plot and table of coefficients and stats from one or more regression models.}
 \usage{
-forestplot(..., modelnames = NULL, varnames = NULL, stats = NULL,
-  odds.ratio = F, breaks = NULL, intercept = T, sig = 3)
+forestplot(
+  ...,
+  modelnames = NULL,
+  varnames = NULL,
+  stats = NULL,
+  odds.ratio = F,
+  breaks = NULL,
+  intercept = T,
+  sig = 3
+)
 }
 \arguments{
 \item{...}{One or more model objects.}

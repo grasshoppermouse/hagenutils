@@ -259,14 +259,25 @@ inline_ttest <- function(formula, data, sig=3){
 custom.summarize = function(df, vars, facvar=NULL, statscol=T, test_type='wilcox', sig.digits=2){
 
   sum_stats <- function(df, var.names){
-    d=data.frame(
+    
+    d <- data.frame(
       N = sapply(var.names, FUN=function(x) sum(!is.na(df[[x]]))),
       Min = sapply(var.names, FUN=function(x) min(df[[x]], na.rm=T)),
       Max = sapply(var.names, FUN=function(x) max(df[[x]], na.rm=T)),
       Mean = sapply(var.names, FUN=function(x) mean(df[[x]], na.rm=T)),
       SD = sapply(var.names, FUN=function(x) sd(df[[x]], na.rm=T))
     )
-    d[-1] = sapply(d[-1], FUN=function(x) signif(x, sig.digits))
+    d[-1] <- sapply(d[-1], FUN=function(x) signif(x, sig.digits))
+    # d[-1] <- map_df(d[-1], ~ signif(., sig.digits))
+    
+    # Now format -> char var
+    d <- data.frame(
+      N = d$N,
+      Range = glue::glue_data(d, '{Min}-{Max}'),
+      `Mean (SD)` = glue::glue_data(d, '{Mean} ({SD})'),
+      stringsAsFactors = F, 
+      check.names = F
+    )
     row.names(d) = NULL
     return(d)
   }
@@ -297,8 +308,8 @@ custom.summarize = function(df, vars, facvar=NULL, statscol=T, test_type='wilcox
       fac = facs[i]
       d_sub = df[df[[facvar]]==fac,]
       df_list[[i]] <- sum_stats(d_sub, var.names)
-      d <- do.call(cbind, df_list)
     }
+    d <- do.call(cbind, df_list)
     if (statscol){
       d$d = NA
       # d$stat = NA

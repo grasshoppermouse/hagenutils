@@ -4,8 +4,16 @@
 \alias{logistic_forestplot}
 \title{logistic_forestplot}
 \usage{
-logistic_forestplot(..., modelnames = NULL, varnames = NULL, stats = NULL,
-  odds.ratio = F, breaks = NULL, intercept = T, sig = 3)
+logistic_forestplot(
+  ...,
+  modelnames = NULL,
+  varnames = NULL,
+  stats = NULL,
+  odds.ratio = F,
+  breaks = NULL,
+  intercept = T,
+  sig = 3
+)
 }
 \arguments{
 \item{...}{One or more logistic regression model objects.}

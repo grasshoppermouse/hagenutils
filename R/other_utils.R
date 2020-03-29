@@ -180,3 +180,69 @@ ggdotchart <- function(v){
     labs(x = "", y = "") +
     theme_minimal(15)
 }
+
+#' @title scale_colour_binary
+#' @description Provides exactly two colors from the viridis magma palette (red and purple)
+#' @param direction Order of colors, 1: purple-red. -1: red-purple, Default: 1
+#' @param ... Additional arguments to be passed to ggplot2::discrete_scale
+#' @return a colour scale to be used with ggplot2
+#' @details The default top level from the discrete viridis scale is bright yellow, which is too bright. This scale uses red for top level.
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  ggplot(mtcars, aes(hp, mpg, colour=factor(am))) + geom_point() + scale_colour_binary()
+#'  }
+#' }
+#' @seealso 
+#'  \code{\link[ggplot2]{discrete_scale}}
+#'  \code{\link[viridisLite]{magma}}
+#' @rdname scale_colour_binary
+#' @export 
+#' @importFrom ggplot2 discrete_scale
+#' @importFrom viridisLite magma
+scale_colour_binary<- function(direction=1, ...){
+  ggplot2::discrete_scale(
+    "colour", "binary", 
+    function(n){
+      if (n != 2) stop('custom binary palette provides exactly 2 colors')
+      cols <- viridisLite::magma(11)[c(4,8)]
+      if (direction >= 0) cols else rev(cols)
+    }, 
+    ...
+  )
+}
+
+#' @rdname scale_colour_binary
+#' @export
+scale_color_binary <- scale_colour_binary
+
+#' @title scale_fill_binary
+#' @description Provides exactly two colors from the viridis magma palette (red and purple)
+#' @param direction Order of colors, 1: purple-red. -1: red-purple, Default: 1
+#' @param ... Additional arguments to be passed to ggplot2::discrete_scale
+#' @return a fill scale to be used with ggplot2
+#' @details The default top level from the discrete viridis scale is bright yellow, which is too bright. This scale uses red for top level.
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  ggplot(mtcars, aes(mpg, fill=factor(am))) + geom_histogram() + scale_fill_binary()
+#'  }
+#' }
+#' @seealso 
+#'  \code{\link[ggplot2]{discrete_scale}}
+#'  \code{\link[viridisLite]{magma}}
+#' @rdname scale_fill_binary
+#' @export 
+#' @importFrom ggplot2 discrete_scale
+#' @importFrom viridisLite magma
+scale_fill_binary<- function(direction=1, ...){
+  ggplot2::discrete_scale(
+    "fill", "binary", 
+    function(n){
+      if (n != 2) stop('custom binary palette provides exactly 2 colors')
+      cols <- viridisLite::magma(11)[c(4,8)]
+      if (direction >= 0) cols else rev(cols)
+    }, 
+    ...
+  )
+}

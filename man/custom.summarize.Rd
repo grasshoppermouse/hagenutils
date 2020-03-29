@@ -4,8 +4,14 @@
 \alias{custom.summarize}
 \title{Output summary table split by a categorical variable}
 \usage{
-custom.summarize(df, vars, facvar = NULL, statscol = T,
-  test_type = "wilcox", sig.digits = 2)
+custom.summarize(
+  df,
+  vars,
+  facvar = NULL,
+  statscol = T,
+  test_type = "wilcox",
+  sig.digits = 2
+)
 }
 \arguments{
 \item{df}{data frame}
