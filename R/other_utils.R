@@ -15,6 +15,7 @@ library(tidyverse)
 #' m = glm(am ~ mpg + hp + cyl, family=binomial, data=mtcars)
 #' newdata = expand.grid(mpg=10:35, hp=50:335, cyl=c(4,6,8))
 #' df = predicted_prob(m, newdata)
+#' @export 
 predicted_prob = function(mod, df){
 
   df2 = cbind(df, predict(mod, newdata = df, type = "link", se=T))
@@ -35,6 +36,7 @@ predicted_prob = function(mod, df){
 #' @return Cohen's d
 #' @examples
 #' cohen_d(x, y)
+#' @export 
 cohen_d = function(x, y){
   x <- na.omit(x)
   y <- na.omit(y)
@@ -57,6 +59,7 @@ cohen_d = function(x, y){
 #' @examples
 #' m <- prcomp(mtcars, scale = T)
 #' pca_loadings_plot(m, components = c(1,2))
+#' @export 
 pca_loadings_plot <- function(obj, components = 1:3, sortby = 1){
     require(dplyr)
     varprop <- summary(obj)$importance[2,components] # Get % variance

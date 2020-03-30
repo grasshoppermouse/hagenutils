@@ -17,7 +17,7 @@
 #' mnms <- c('MPG vs HP', 'MPG vs Weight')
 #' vnms <- c(mpg='Miles per gallon', hp='Horsepower', wt='Weight')
 #' out <- forestplot(m1, m2, modelsnames=mnms, varnames=vnms)
-
+#' @export 
 forestplot <- function(
     ...,
     modelnames=NULL,
@@ -135,7 +135,6 @@ forestplot <- function(
     )
 }
 
-
 #' logistic_forestplot
 #'
 #' @param ... One or more logistic regression model objects.
@@ -154,7 +153,7 @@ forestplot <- function(
 #' mnms <- c('AM vs HP', 'AM vs Weight')
 #' vnms <- c(mpg='Miles per gallon', hp='Horsepower', wt='Weight')
 #' out <- logistic_forestplot(m1, m2, modelsnames=mnms, varnames=vnms)
-
+#' @export 
 logistic_forestplot <- function(...,
                                 modelnames = NULL,
                                 varnames = NULL,
@@ -231,6 +230,7 @@ logistic_forestplot <- function(...,
 #' mnms <- c('MPG vs HP', 'MPG vs Weight')
 #' vnms <- c('Miles per gallon'=mpg, 'Horsepower'=hp, 'Weight'=wt)
 #' out <- forestplot(m1, m2, modelsnames=mnms, varnames=vnms)
+#' @export
 inline_ttest <- function(formula, data, sig=3){
 
   ttest <- t.test(formula, data=data)
@@ -256,6 +256,7 @@ inline_ttest <- function(formula, data, sig=3){
 #' data(mtcars)
 #' vars = c(mpg = 'miles per gallon', hp = 'horse power')
 #' custom.summarize(mtcars, vars, facvar='am')
+#' @export 
 custom.summarize = function(df, vars, facvar=NULL, statscol=T, test_type='wilcox', sig.digits=2){
 
   sum_stats <- function(df, var.names){
