@@ -253,6 +253,7 @@ scale_fill_binary<- function(direction=1, ...){
 #' @title ggemmeans
 #' @description ggplot of estimated marginal means object, with categorical spec variable sorted by estimate
 #' @param em An emmeans object
+#' @param reorder If TRUE (default), reorder levels of a categorical predictor by values of the estimate
 #' @return a ggplot object
 #' @details This function is similar to the emmeans plot function, except that it sorts the levels of a categorical variable by the estimated mean
 #' @examples 
@@ -265,13 +266,13 @@ scale_fill_binary<- function(direction=1, ...){
 #' }
 #' @rdname ggemmeans
 #' @export 
-ggemmeans <- function(em){
-  emsum <- emmeans::summary.emmGrid(em)
+ggemmeans <- function(em, reorder = T){
+  emsum <- summary(em)
   estName <- attr(emsum, 'estName')
   clNames <- attr(emsum, 'clNames')
   var <- attr(emsum, 'pri.vars')[1]
-  if (is.character(emsum[var])){
-    emsum[var] <- forcats::fct_reorder(emsum[var], emsum[estName])
+  if (reorder & is.factor(emsum[[var]])){
+    emsum[var] <- forcats::fct_reorder(emsum[[var]], emsum[[estName]])
   }
   ggplot(emsum, aes_string(estName, var, xmin = clNames[1], xmax = clNames[2])) +
     geom_errorbarh(height = 0, lwd = 2.5, alpha = 0.3) +

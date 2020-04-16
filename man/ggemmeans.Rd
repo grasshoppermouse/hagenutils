@@ -4,10 +4,12 @@
 \alias{ggemmeans}
 \title{ggemmeans}
 \usage{
-ggemmeans(em)
+ggemmeans(em, reorder = T)
 }
 \arguments{
 \item{em}{An emmeans object}
+
+\item{reorder}{If TRUE (default), reorder levels of a categorical predictor by values of the estimate}
 }
 \value{
 a ggplot object
