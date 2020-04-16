@@ -274,7 +274,7 @@ ggemmeans <- function(em){
     emsum[var] <- forcats::fct_reorder(emsum[var], emsum[estName])
   }
   ggplot(emsum, aes_string(estName, var, xmin = clNames[1], xmax = clNames[2])) +
-    geom_errorbarh(height = 0, lwd=2.5, alpha = 0.3) +
+    geom_errorbarh(height = 0, lwd = 2.5, alpha = 0.3) +
     geom_point() +
     theme_minimal(15)
 }
