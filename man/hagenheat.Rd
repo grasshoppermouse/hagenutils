@@ -4,7 +4,13 @@
 \alias{hagenheat}
 \title{hagenheat}
 \usage{
-hagenheat(d, hc_method = "ward.D", dist = "euclidean", scale. = "row")
+hagenheat(
+  d,
+  hc_method = "ward.D",
+  dist = "euclidean",
+  scale. = "row",
+  viridis_option = "D"
+)
 }
 \arguments{
 \item{d}{A data frame. Column 1 must be row labels. Remaining columns must be numeric.}
@@ -14,15 +20,19 @@ hagenheat(d, hc_method = "ward.D", dist = "euclidean", scale. = "row")
 \item{dist}{Distance method from dist, Default: 'euclidean'}
 
 \item{scale.}{Whether to scale rows ('row'), columns ('col'), or neither ('none'), Default: 'row'}
+
+\item{viridis_option.}{One of the viridis color options, 'A', 'B', 'C', 'D', 'E', Default: 'D'}
 }
 \value{
 A ggplot object
 }
 \description{
-Basic heatmap using ggplot. No dendrograms, though.
+Basic heatmap using ggplot, dist, and hclust. No dendrograms are plotted, though.
 }
 \details{
-DETAILS
+Produces a very simple ggplot heatmap using viridis colors. 
+Rows and columns are clustered using dist and hclust (but no dendrograms are plotted).
+First column of data frame must be row labels. Remaining columns must be numeric.
 }
 \examples{
 \dontrun{

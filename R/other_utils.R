@@ -281,13 +281,16 @@ ggemmeans <- function(em, reorder = T){
 }
 
 #' @title hagenheat
-#' @description Basic heatmap using ggplot. No dendrograms, though.
+#' @description Basic heatmap using ggplot, dist, and hclust. No dendrograms are plotted, though.
 #' @param d A data frame. Column 1 must be row labels. Remaining columns must be numeric.
 #' @param hc_method Agglomeration method from hclust, Default: 'ward.D'
 #' @param dist Distance method from dist, Default: 'euclidean'
 #' @param scale. Whether to scale rows ('row'), columns ('col'), or neither ('none'), Default: 'row'
+#' @param viridis_option. One of the viridis color options, 'A', 'B', 'C', 'D', 'E', Default: 'D'
 #' @return A ggplot object
-#' @details DETAILS
+#' @details Produces a very simple ggplot heatmap using viridis colors. 
+#' Rows and columns are clustered using dist and hclust (but no dendrograms are plotted).
+#' First column of data frame must be row labels. Remaining columns must be numeric.
 #' @examples 
 #' \dontrun{
 #' if(interactive()){
@@ -299,10 +302,8 @@ ggemmeans <- function(em, reorder = T){
 #' @export 
 #' @importFrom scales label_wrap
 #' @importFrom viridis scale_fill_viridis
-hagenheat <- function(d, hc_method = 'ward.D', dist = 'euclidean', scale. = 'row'){
-  # Assumes that first column is row labels, and that
-  # remaining columns are numeric
-  
+hagenheat <- function(d, hc_method = 'ward.D', dist = 'euclidean', scale. = 'row', viridis_option = 'D'){
+
   if (scale. == 'row'){
     d[-1] <- as_tibble(t(scale(t(d[-1]))))
   } else if (scale. == 'col'){
@@ -320,7 +321,7 @@ hagenheat <- function(d, hc_method = 'ward.D', dist = 'euclidean', scale. = 'row
       key = factor(key, levels = colnames(d[-1])[hclustcols$order]),
     ) %>% 
     ggplot(aes_string('key', colnames(.)[1], fill = 'value')) + geom_raster() +
-    viridis::scale_fill_viridis() +
+    viridis::scale_fill_viridis(option = viridis_option) +
     scale_x_discrete(labels = scales::label_wrap(10)) +
     labs(x = "", y = "")
 }
