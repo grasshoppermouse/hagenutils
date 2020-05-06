@@ -162,6 +162,7 @@ svysmooth2df <-
 #' @title ggdotchart
 #' @description ggplot version of base::dotchart
 #' @param v A named vector, e.g., a table
+#' @param threshold A numeric value. Values in v that are greater than this will have different colors and shapes
 #' @return a ggplot object
 #' @details Uses theme_minimal, and no axis labels.
 #' @examples 
@@ -172,13 +173,21 @@ svysmooth2df <-
 #' }
 #' @rdname ggdotchart
 #' @export
-ggdotchart <- function(v){
+ggdotchart <- function(v, threshold = NULL){
   nms <- names(v)
-  tibble(
+  d <- tibble(
     x = as.numeric(v),
     y = factor(nms, levels = nms[order(v)])
-  ) %>%
-    ggplot(aes(x, y)) +
+  ) 
+  
+  if (!is.null(threshold) & is.numeric(threshold)){
+    d$threshold <- d$x > threshold
+    p <- ggplot(d, aes(x, y, colour = threshold, shape = threshold))
+  } else {
+    p <- ggplot(d, aes(x, y))
+  }
+  
+  p +
     geom_point(size = 3) +
     labs(x = "", y = "") +
     theme_minimal(15)

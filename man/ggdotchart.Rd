@@ -4,10 +4,12 @@
 \alias{ggdotchart}
 \title{ggdotchart}
 \usage{
-ggdotchart(v)
+ggdotchart(v, threshold = NULL)
 }
 \arguments{
 \item{v}{A named vector, e.g., a table}
+
+\item{threshold}{A numeric value. Values in v that are greater than this will have different colors and shapes}
 }
 \value{
 a ggplot object
