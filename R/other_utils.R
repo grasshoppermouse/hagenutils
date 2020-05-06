@@ -323,5 +323,6 @@ hagenheat <- function(d, hc_method = 'ward.D', dist = 'euclidean', scale. = 'row
     ggplot(aes_string('key', colnames(.)[1], fill = 'value')) + geom_raster() +
     viridis::scale_fill_viridis(option = viridis_option) +
     scale_x_discrete(labels = scales::label_wrap(10)) +
-    labs(x = "", y = "")
+    labs(x = "", y = "") + 
+    theme_minimal()
 }
