@@ -322,10 +322,10 @@ hagenheat <- function(d, hc_method = 'ward.D', dist = 'euclidean', scale. = 'row
   hclustrows <- hclust(dist(d[-1], method = dist), method = hc_method)
   hclustcols <- hclust(dist(t(d[-1]), method = dist), method = hc_method)
   
-  d[1] <- factor(d[[1]], levels = d[hclustrows$order,][[1]])
+  d[1] <- factor(d[[1]], levels = d[[1]][hclustrows$order])
   
   d %>%
-    gather(key = key, value = value, -1) %>% 
+    tidyr::gather(key = key, value = value, -1) %>% 
     mutate(
       key = factor(key, levels = colnames(d[-1])[hclustcols$order]),
     ) %>% 
