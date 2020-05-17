@@ -312,7 +312,12 @@ ggemmeans <- function(em, reorder = T){
 #' @importFrom scales label_wrap
 #' @importFrom viridis scale_fill_viridis
 hagenheat <- function(d, hc_method = 'ward.D', dist = 'euclidean', scale. = 'row', viridis_option = 'D'){
-
+  
+  # Check data
+  if (!is.character(d[[1]])) stop('Column 1 must be a character vector of row names')
+  coltypes <- sapply(d[-1], mode)
+  if (length(setdiff(coltypes, c('numeric', 'logical')))) stop('Columns 2:n must be numeric')
+  
   if (scale. == 'row'){
     d[-1] <- as_tibble(t(scale(t(d[-1]))))
   } else if (scale. == 'col'){
