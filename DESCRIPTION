@@ -1,18 +1,18 @@
 Package: hagenutils
 Title: Plots, tables, and inlines for knitr
-Version: 0.0.1.9004
+Version: 0.0.2.9000
 Authors@R: person("Ed", "Hagen", email = "ehagen@gmail.com", role = c("aut", "cre"))
 Description: forestplot: creates a ggplot forestplot object and corresponding
     data frame of coefficients that can be included in rmarkdown using kable.
     inline_ttest formats results of a t-test for inclusion in rmarkdown.
     custom.summarize creates a table of summary stats, optionally by subsets.
     predicted_probability computes the predicted probability for a logistic
-    regression model.
+    regression model. hagenheat is a basic ggplot heatmap.
 Depends: R (>= 3.1.0)
 License: MIT
 URL: http://github.com/grasshoppermouse/hagenutils
 BugReports: https://github.com/grasshoppermouse/hagenutils/issues
-Imports: broom, dplyr, ggplot2, reshape2, ggalt
+Imports: broom, dplyr, tidyr, ggplot2, reshape2, ggalt, seriation, scales, viridis
 LazyData: true
 RoxygenNote: 7.1.0
 NeedsCompilation: no

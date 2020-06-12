@@ -292,51 +292,97 @@ ggemmeans <- function(em, reorder = T){
 #' @title hagenheat
 #' @description Basic heatmap using ggplot, dist, and hclust. No dendrograms are plotted, though.
 #' @param d A data frame. Column 1 must be row labels. Remaining columns must be numeric.
+#' @param method "seriate" or "hclust". Default: "seriate"
+#' @param seriation_method Default 'Spectral'
 #' @param hc_method Agglomeration method from hclust, Default: 'ward.D'
 #' @param dist Distance method from dist, Default: 'euclidean'
 #' @param scale. Whether to scale rows ('row'), columns ('col'), or neither ('none'), Default: 'row'
 #' @param viridis_option. One of the viridis color options, 'A', 'B', 'C', 'D', 'E', Default: 'D'
 #' @return A ggplot object
 #' @details Produces a very simple ggplot heatmap using viridis colors. 
-#' Rows and columns are clustered using dist and hclust (but no dendrograms are plotted).
+#' Rows and columns are clustered using the seriation package.
 #' First column of data frame must be row labels. Remaining columns must be numeric.
 #' @examples 
 #' \dontrun{
 #' if(interactive()){
-#'  d <- cbind(rownames(mtcars), mtcars)
-#'  hagenheat(d, scale. = 'col')
+#'  hagenheat(mtcars, scale. = 'col')
 #'  }
 #' }
+#' @seealso 
+#'  \code{\link[seriation]{seriate}}
+#'  \code{\link[seriation]{seriation_methods}}
+#'  \code{\link[viridis]{scale_color_viridis}}
 #' @rdname hagenheat
 #' @export 
-#' @importFrom scales label_wrap
+#' @importFrom seriation seriate get_order
+#' @importFrom dplyr bind_cols
+#' @importFrom tidyr gather
 #' @importFrom viridis scale_fill_viridis
-hagenheat <- function(d, hc_method = 'ward.D', dist = 'euclidean', scale. = 'row', viridis_option = 'D'){
+#' @importFrom scales label_wrap
+hagenheat <- function(
+  d, 
+  method='seriate', 
+  seriation_method='Spectral', 
+  hc_method = 'ward.D', 
+  dist_method = 'euclidean', 
+  scale. = 'col', 
+  viridis_option = 'D'
+  ){
   
-  # Check data
-  if (!is.character(d[[1]])) stop('Column 1 must be a character vector of row names')
-  coltypes <- sapply(d[-1], mode)
-  if (length(setdiff(coltypes, c('numeric', 'logical')))) stop('Columns 2:n must be numeric')
-  
-  if (scale. == 'row'){
-    d[-1] <- as_tibble(t(scale(t(d[-1]))))
-  } else if (scale. == 'col'){
-    d[-1] <- as_tibble(scale(d[-1])) 
+  # Get rownames
+  if (is.character(d[[1]]) | is.factor(d[[1]])){
+    rwnms <- d[[1]]
+    d <- d[-1]
+  } else if(length(rownames(d))>1){
+    rwnms <- rownames(d)
+  } else {
+    rwnms <- as.character(1:nrow(d))
   }
   
-  hclustrows <- hclust(dist(d[-1], method = dist), method = hc_method)
-  hclustcols <- hclust(dist(t(d[-1]), method = dist), method = hc_method)
+  # Check data
+  coltypes <- sapply(d, class)
+  if (length(setdiff(coltypes, c('numeric', 'logical')))) stop('Columns 2:n must be numeric')
   
-  d[1] <- factor(d[[1]], levels = d[[1]][hclustrows$order])
+  if (method == 'seriate'){
+  
+    o <- seriation::seriate(dist(d, method = dist_method), method=seriation_method)
+    row_order <- seriation::get_order(o)
+    o <- seriation::seriate(dist(t(d), method = dist_method), method=seriation_method)
+    col_order <- seriation::get_order(o)
+    
+  } else if (method == 'hclust'){
+    
+    hclustrows <- hclust(dist(d, method = dist_method), method = hc_method)
+    row_order <- hclustrows$order
+    hclustcols <- hclust(dist(t(d), method = dist_method), method = hc_method)
+    col_order <- hclustcols$order
+    
+  } else {
+    
+    stop("method must be 'seriate' or 'hclust'")
+    
+  }
+  
+  if (scale. == 'row'){
+    d <- as_tibble(t(scale(t(d))))
+  } else if (scale. == 'col'){
+    d <- as_tibble(scale(d)) 
+  } else {
+    d <- as_tibble(d)
+  }
+  
+  rwnms <- factor(rwnms, levels = rwnms[row_order])
+  d <- dplyr::bind_cols(rowname=rwnms, d)
   
   d %>%
     tidyr::gather(key = key, value = value, -1) %>% 
     mutate(
-      key = factor(key, levels = colnames(d[-1])[hclustcols$order]),
-    ) %>% 
-    ggplot(aes_string('key', colnames(.)[1], fill = 'value')) + geom_raster() +
+      key = factor(key, levels = colnames(d[-1])[col_order]),
+    ) %>%
+    ggplot(aes_string('key', colnames(.)[1], fill = 'value')) + 
+    geom_tile() +
     viridis::scale_fill_viridis(option = viridis_option) +
     scale_x_discrete(labels = scales::label_wrap(10)) +
-    labs(x = "", y = "") + 
+    labs(x = "", y = "") +
     theme_minimal()
 }

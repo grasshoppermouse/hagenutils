@@ -6,20 +6,26 @@
 \usage{
 hagenheat(
   d,
+  method = "seriate",
+  seriation_method = "Spectral",
   hc_method = "ward.D",
-  dist = "euclidean",
-  scale. = "row",
+  dist_method = "euclidean",
+  scale. = "col",
   viridis_option = "D"
 )
 }
 \arguments{
 \item{d}{A data frame. Column 1 must be row labels. Remaining columns must be numeric.}
 
+\item{method}{"seriate" or "hclust". Default: "seriate"}
+
+\item{seriation_method}{Default 'Spectral'}
+
 \item{hc_method}{Agglomeration method from hclust, Default: 'ward.D'}
 
-\item{dist}{Distance method from dist, Default: 'euclidean'}
-
 \item{scale.}{Whether to scale rows ('row'), columns ('col'), or neither ('none'), Default: 'row'}
+
+\item{dist}{Distance method from dist, Default: 'euclidean'}
 
 \item{viridis_option.}{One of the viridis color options, 'A', 'B', 'C', 'D', 'E', Default: 'D'}
 }
@@ -31,14 +37,18 @@ Basic heatmap using ggplot, dist, and hclust. No dendrograms are plotted, though
 }
 \details{
 Produces a very simple ggplot heatmap using viridis colors. 
-Rows and columns are clustered using dist and hclust (but no dendrograms are plotted).
+Rows and columns are clustered using the seriation package.
 First column of data frame must be row labels. Remaining columns must be numeric.
 }
 \examples{
 \dontrun{
 if(interactive()){
- d <- cbind(rownames(mtcars), mtcars)
- hagenheat(d, scale. = 'col')
+ hagenheat(mtcars, scale. = 'col')
  }
 }
+}
+\seealso{
+\code{\link[seriation]{seriate}}
+ \code{\link[seriation]{seriation_methods}}
+ \code{\link[viridis]{scale_color_viridis}}
 }
