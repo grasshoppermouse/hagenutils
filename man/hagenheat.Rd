@@ -11,7 +11,8 @@ hagenheat(
   hc_method = "ward.D",
   dist_method = "euclidean",
   scale. = "none",
-  viridis_option = "D"
+  viridis_option = "D",
+  ann_col = NULL
 )
 }
 \arguments{
@@ -25,9 +26,11 @@ hagenheat(
 
 \item{scale.}{Whether to scale rows ('row'), columns ('column'), or neither ('none'), Default: 'none'}
 
-\item{dist}{Distance method from dist, Default: 'euclidean'}
+\item{viridis_option}{One of the viridis color options, 'A', 'B', 'C', 'D', 'E', Default: 'D'}
 
-\item{viridis_option.}{One of the viridis color options, 'A', 'B', 'C', 'D', 'E', Default: 'D'}
+\item{ann_col}{A data frame with two variables. The first column must be the names of the columns of 'd'. The second column contains the annotation values.}
+
+\item{dist}{Distance method from dist, Default: 'euclidean'}
 }
 \value{
 A ggplot object
