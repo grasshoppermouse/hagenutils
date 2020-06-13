@@ -291,12 +291,12 @@ ggemmeans <- function(em, reorder = T){
 
 #' @title hagenheat
 #' @description Basic heatmap using ggplot, dist, and hclust. No dendrograms are plotted, though.
-#' @param d A data frame. Column 1 must be row labels. Remaining columns must be numeric.
+#' @param d A data frame, matrix, or dist object. Column 1 of a data frame can be row labels. Remaining columns must be numeric.
 #' @param method "seriate" or "hclust". Default: "seriate"
 #' @param seriation_method Default 'Spectral'
 #' @param hc_method Agglomeration method from hclust, Default: 'ward.D'
 #' @param dist Distance method from dist, Default: 'euclidean'
-#' @param scale. Whether to scale rows ('row'), columns ('col'), or neither ('none'), Default: 'row'
+#' @param scale. Whether to scale rows ('row'), columns ('column'), or neither ('none'), Default: 'none'
 #' @param viridis_option. One of the viridis color options, 'A', 'B', 'C', 'D', 'E', Default: 'D'
 #' @return A ggplot object
 #' @details Produces a very simple ggplot heatmap using viridis colors. 
@@ -325,24 +325,44 @@ hagenheat <- function(
   seriation_method='Spectral', 
   hc_method = 'ward.D', 
   dist_method = 'euclidean', 
-  scale. = 'col', 
+  scale. = "none", 
   viridis_option = 'D'
   ){
   
-  # Get rownames
-  if (is.character(d[[1]]) | is.factor(d[[1]])){
-    rwnms <- d[[1]]
-    d <- d[-1]
-  } else if(length(rownames(d))>1){
-    rwnms <- rownames(d)
-  } else {
-    rwnms <- as.character(1:nrow(d))
+  # Convert dist object or data frame to matrix
+  rwnms <- character(0)
+  if ('dist' %in% class(d)) {
+    d <- as.matrix(d)
+  } else if ('data.frame' %in% class(d)){
+    if (is.character(d[[1]]) | is.factor(d[[1]])){
+      rwnms <- d[[1]]
+      d <- d[-1]
+    }
+    d <- as.matrix(d)
   }
   
-  # Check data
-  coltypes <- sapply(d, class)
-  if (length(setdiff(coltypes, c('numeric', 'logical')))) stop('Columns 2:n must be numeric')
+  # If d is logical, converts to numeric
+  if (mode(d) == 'logical') d <- d*1
+  if (mode(d) != 'numeric') stop('d must be convertible to a numeric matrix')
   
+  if (length(di <- dim(d)) != 2) 
+    stop("'d' must have 2 dimensions")
+
+  nr <- di[1L]
+  nc <- di[2L]  
+  if (nr <= 1 || nc <= 1) 
+    stop("'d' must have at least 2 rows and 2 columns")
+
+  # Get rownames if haven't gotten them already
+  if (length(rwnms) == 0){
+    if(length(rownames(d))>1){
+      rwnms <- rownames(d)
+    } else {
+      rwnms <- as.character(1:nrow(d))
+    }
+  }
+  
+  # Order the rows and columns
   if (method == 'seriate'){
   
     o <- seriation::seriate(dist(d, method = dist_method), method=seriation_method)
@@ -365,7 +385,7 @@ hagenheat <- function(
   
   if (scale. == 'row'){
     d <- as_tibble(t(scale(t(d))))
-  } else if (scale. == 'col'){
+  } else if (scale. == 'column'){
     d <- as_tibble(scale(d)) 
   } else {
     d <- as_tibble(d)
@@ -379,7 +399,7 @@ hagenheat <- function(
     mutate(
       key = factor(key, levels = colnames(d[-1])[col_order]),
     ) %>%
-    ggplot(aes_string('key', colnames(.)[1], fill = 'value')) + 
+    ggplot(aes_string('key', colnames(.)[1], fill = 'value')) +
     geom_tile() +
     viridis::scale_fill_viridis(option = viridis_option) +
     scale_x_discrete(labels = scales::label_wrap(10)) +

@@ -10,12 +10,12 @@ hagenheat(
   seriation_method = "Spectral",
   hc_method = "ward.D",
   dist_method = "euclidean",
-  scale. = "col",
+  scale. = "none",
   viridis_option = "D"
 )
 }
 \arguments{
-\item{d}{A data frame. Column 1 must be row labels. Remaining columns must be numeric.}
+\item{d}{A data frame, matrix, or dist object. Column 1 of a data frame can be row labels. Remaining columns must be numeric.}
 
 \item{method}{"seriate" or "hclust". Default: "seriate"}
 
@@ -23,7 +23,7 @@ hagenheat(
 
 \item{hc_method}{Agglomeration method from hclust, Default: 'ward.D'}
 
-\item{scale.}{Whether to scale rows ('row'), columns ('col'), or neither ('none'), Default: 'row'}
+\item{scale.}{Whether to scale rows ('row'), columns ('column'), or neither ('none'), Default: 'none'}
 
 \item{dist}{Distance method from dist, Default: 'euclidean'}
 
