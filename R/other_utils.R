@@ -313,6 +313,7 @@ ggemmeans <- function(em, reorder = T){
 #'  \code{\link[seriation]{seriate}}
 #'  \code{\link[seriation]{seriation_methods}}
 #'  \code{\link[viridis]{scale_color_viridis}}
+#'  \code{\link[ggnewscale]{new_scale_fill}}
 #' @rdname hagenheat
 #' @export 
 #' @importFrom seriation seriate get_order
@@ -320,6 +321,7 @@ ggemmeans <- function(em, reorder = T){
 #' @importFrom tidyr gather
 #' @importFrom viridis scale_fill_viridis
 #' @importFrom scales label_wrap
+#' @importFrom ggnewscale new_scale_fill
 hagenheat <- function(
   d, 
   method='seriate', 

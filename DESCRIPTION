@@ -1,6 +1,6 @@
 Package: hagenutils
 Title: Plots, tables, and inlines for knitr
-Version: 0.0.2.9001
+Version: 0.0.2.9002
 Authors@R: person("Ed", "Hagen", email = "ehagen@gmail.com", role = c("aut", "cre"))
 Description: forestplot: creates a ggplot forestplot object and corresponding
     data frame of coefficients that can be included in rmarkdown using kable.
@@ -12,7 +12,7 @@ Depends: R (>= 3.1.0)
 License: MIT
 URL: http://github.com/grasshoppermouse/hagenutils
 BugReports: https://github.com/grasshoppermouse/hagenutils/issues
-Imports: broom, dplyr, tidyr, ggplot2, reshape2, ggalt, seriation, scales, viridis
+Imports: broom, dplyr, tidyr, ggplot2, reshape2, ggalt, seriation, scales, viridis, ggnewscale
 LazyData: true
 RoxygenNote: 7.1.0
 NeedsCompilation: no

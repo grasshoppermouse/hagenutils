@@ -54,4 +54,5 @@ if(interactive()){
 \code{\link[seriation]{seriate}}
  \code{\link[seriation]{seriation_methods}}
  \code{\link[viridis]{scale_color_viridis}}
+ \code{\link[ggnewscale]{new_scale_fill}}
 }
