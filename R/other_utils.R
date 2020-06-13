@@ -297,7 +297,8 @@ ggemmeans <- function(em, reorder = T){
 #' @param hc_method Agglomeration method from hclust, Default: 'ward.D'
 #' @param dist Distance method from dist, Default: 'euclidean'
 #' @param scale. Whether to scale rows ('row'), columns ('column'), or neither ('none'), Default: 'none'
-#' @param viridis_option. One of the viridis color options, 'A', 'B', 'C', 'D', 'E', Default: 'D'
+#' @param viridis_option One of the viridis color options, 'A', 'B', 'C', 'D', 'E', Default: 'D'
+#' @param ann_col A data frame with two variables. The first column must be the names of the columns of 'd'. The second column contains the annotation values.
 #' @return A ggplot object
 #' @details Produces a very simple ggplot heatmap using viridis colors. 
 #' Rows and columns are clustered using the seriation package.
@@ -326,7 +327,8 @@ hagenheat <- function(
   hc_method = 'ward.D', 
   dist_method = 'euclidean', 
   scale. = "none", 
-  viridis_option = 'D'
+  viridis_option = 'D',
+  ann_col = NULL
   ){
   
   # Convert dist object or data frame to matrix
@@ -394,7 +396,8 @@ hagenheat <- function(
   rwnms <- factor(rwnms, levels = rwnms[row_order])
   d <- dplyr::bind_cols(rowname=rwnms, d)
   
-  d %>%
+  p <-
+    d %>%
     tidyr::gather(key = key, value = value, -1) %>% 
     mutate(
       key = factor(key, levels = colnames(d[-1])[col_order]),
@@ -405,4 +408,20 @@ hagenheat <- function(
     scale_x_discrete(labels = scales::label_wrap(10)) +
     labs(x = "", y = "") +
     theme_minimal()
+  
+  if (!is.null(ann_col)){
+    
+    nms <- names(ann_col)
+    ann_col$value = 1
+    h <- nrow(d)/20
+    
+    p <- p + 
+      ggnewscale::new_scale_fill() +
+      geom_tile(data = ann_col, aes_string(x = nms[1], y = nrow(d) + h, fill = nms[2]), height = h, width = 1) +
+      coord_cartesian(clip = 'off') +
+      theme(
+        plot.margin = unit(c(2,1,1,1), "lines")
+      )
+  }
+  return(p)
 }
