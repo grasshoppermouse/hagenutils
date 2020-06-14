@@ -7,11 +7,14 @@
 hagenheat(
   d,
   method = "seriate",
-  seriation_method = "Spectral",
+  seriation_method = NULL,
+  independent = F,
   hc_method = "ward.D",
   dist_method = "euclidean",
   scale. = "none",
   viridis_option = "D",
+  wrap_labels = T,
+  rotate_labels = F,
   ann_col = NULL
 )
 }
@@ -20,13 +23,19 @@ hagenheat(
 
 \item{method}{"seriate" or "hclust". Default: "seriate"}
 
-\item{seriation_method}{Default 'Spectral'}
+\item{seriation_method}{If not specified, 'Spectral' will be used for dist objects, and 'PCA' for matrices and data frames.}
+
+\item{independent}{Whether to seriate a matrix using matrix methods (F) or separate distance matrices for rows and columns (T). Default: F}
 
 \item{hc_method}{Agglomeration method from hclust, Default: 'ward.D'}
 
 \item{scale.}{Whether to scale rows ('row'), columns ('column'), or neither ('none'), Default: 'none'}
 
 \item{viridis_option}{One of the viridis color options, 'A', 'B', 'C', 'D', 'E', Default: 'D'}
+
+\item{wrap_labels}{Logical. Wrap the x-axis labels. Default: T}
+
+\item{rotate_labels}{Logical. Rotate the x-axis labels by 90 degrees. Default: F}
 
 \item{ann_col}{A data frame with two variables. The first column must be the names of the columns of 'd'. The second column contains the annotation values.}
 
@@ -36,12 +45,15 @@ hagenheat(
 A ggplot object
 }
 \description{
-Basic heatmap using ggplot, dist, and hclust. No dendrograms are plotted, though.
+Basic heatmap using ggplot, dist, and seriation. No dendrograms are plotted.
 }
 \details{
 Produces a very simple ggplot heatmap using viridis colors. 
-Rows and columns are clustered using the seriation package.
-First column of data frame must be row labels. Remaining columns must be numeric.
+Rows and columns are ordered using the \code{seriation} package.
+For data frames, first column must be row labels. Remaining columns must be numeric.
+Scaling, if performed, occurs after seriation, and is therefore only for display purposes.
+Seriation methods for objects when \code{independent=T}: \code{list_seriation_methods('dist')}.
+Seriation methods for matrices and data frames when \code{independent=F}: \code{list_seriation_methods('matrix')}.
 }
 \examples{
 \dontrun{
@@ -53,6 +65,5 @@ if(interactive()){
 \seealso{
 \code{\link[seriation]{seriate}}
  \code{\link[seriation]{seriation_methods}}
- \code{\link[viridis]{scale_color_viridis}}
  \code{\link[ggnewscale]{new_scale_fill}}
 }
