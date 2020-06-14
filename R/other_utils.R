@@ -340,7 +340,7 @@ hagenheat <- function(
   ann_col = NULL
   ){
   
-  if ('dist' %in% class(d)){
+  if (inherits(d, 'dist')){
     
     rwnms <- labels(d)
     if (is.null(seriation_method)) seriation_method <- 'Spectral'
@@ -353,7 +353,7 @@ hagenheat <- function(
     
     # Convert data frame to matrix
     rwnms <- character(0)
-    if ('data.frame' %in% class(d)){
+    if (inherits(d, 'data.frame')){
       if (is.character(d[[1]]) | is.factor(d[[1]])){
         rwnms <- d[[1]]
         d <- d[-1]
