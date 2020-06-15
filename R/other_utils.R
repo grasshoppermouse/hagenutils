@@ -348,6 +348,7 @@ hagenheat <- function(
     row_order <- seriation::get_order(o)
     col_order <- row_order
     d <- as.matrix(d)
+    if (is.null(rwnms)) rwnms <- as.character(1:nrow(d))
     
   } else {
     
