@@ -221,6 +221,7 @@ logistic_forestplot <- function(...,
 #'
 #' @param formula Specify t-test using standard formula interface.
 #' @param data A data frame containing the variables in formula.
+#' @param effsize Include Cohen's d (default = T)
 #' @param sig The number of signficant digits for the output.
 #' @return A character vector with 1 element.
 #' @examples
