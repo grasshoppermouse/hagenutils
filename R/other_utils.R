@@ -351,7 +351,7 @@ hagenheat <- function(
     if (is.null(rwnms)) {
       warning('Lack of labels on dist object might make plot difficult to interpret')
       rwnms <- as.character(1:nrow(d))
-      }
+    }
     
   } else {
     

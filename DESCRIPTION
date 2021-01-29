@@ -12,7 +12,7 @@ Depends: R (>= 3.1.0)
 License: MIT
 URL: http://github.com/grasshoppermouse/hagenutils
 BugReports: https://github.com/grasshoppermouse/hagenutils/issues
-Imports: broom, dplyr, tidyr, ggplot2, reshape2, ggalt, seriation, scales, viridis, ggnewscale
+Imports: broom, dplyr, tidyr, ggplot2, reshape2, ggalt, seriation, scales, viridis, ggnewscale, glue, effsize
 LazyData: true
 RoxygenNote: 7.1.0
 NeedsCompilation: no

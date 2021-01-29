@@ -231,17 +231,26 @@ logistic_forestplot <- function(...,
 #' vnms <- c('Miles per gallon'=mpg, 'Horsepower'=hp, 'Weight'=wt)
 #' out <- forestplot(m1, m2, modelsnames=mnms, varnames=vnms)
 #' @export
-inline_ttest <- function(formula, data, sig=3){
+inline_ttest <- function(formula, data, effsize=T, sig=3){
 
   ttest <- t.test(formula, data=data)
   m1 <- signif(ttest$estimate[1], sig)
   m2 <- signif(ttest$estimate[2], sig)
   tstat <- signif(ttest$statistic, sig)
+  dfstat <- signif(ttest$parameter, sig)
   p <- signif(ttest$p.value, sig)
 
-  return(
-    paste0('M = ', m2, ' vs. M = ', m1, ' resp.; t = ', tstat, ', p = ', p)
-  )
+  if (effsize){
+    d <- signif(effsize::cohen.d(formula, data = data)$estimate, sig)
+    return(
+      glue::glue('M = {m2} vs. M = {m1}; t({dfstat}) = {tstat}, p = {p}, d = {d}')
+    )
+  } else {
+    return(
+      glue::glue('M = {m2} vs. M = {m1}; t({dfstat}) = {tstat}, p = {p}')
+    )
+  }
+
 }
 
 #' Output summary table split by a categorical variable
