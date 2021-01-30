@@ -37,9 +37,10 @@ predicted_prob = function(mod, df){
 #' @examples
 #' cohen_d(mpg ~ am, mtcars)
 #' @export 
-cohen_d = function(f, d){
-  mf <- model.frame(f, data = d)
+cohen_d = function(f, data, sig = 3){
+  mf <- model.frame(f, data = data)
   if (ncol(mf) != 2) stop('Formula must contain only 2 variables: y ~ x')
+  mf[[2]] <- c(mf[[2]]) # convert factors to regular vectors
   if (length(table(mf[[2]])) != 2) stop('factor must have exactly two values')
   if (!mode(mf[[1]]) %in% c('integer', 'numeric')) stop('Left hand side must be a numeric variable')
   names(mf) <- c('y', 'x')
@@ -48,7 +49,7 @@ cohen_d = function(f, d){
     group_by(x) %>% 
     summarise(n = n(), mean = mean(y, na.rm = T), sd2 = sd(y, na.rm = T)^2)
   d <- (x$mean[1] - x$mean[2])/sqrt(((x$n[1]-1)*x$sd2[1] + (x$n[2]-1)*x$sd2[2])/(sum(x$n)-2))
-  return(d)
+  return(signif(d, sig))
 }
 
 #' pca_loadings_plot
