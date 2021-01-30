@@ -4,14 +4,16 @@
 \alias{inline_ttest}
 \title{Output results of a t-test as a single string to be formatted inline by knitr}
 \usage{
-inline_ttest(formula, data, sig = 3)
+inline_ttest(ttest, effsize = NULL, sig = 3)
 }
 \arguments{
+\item{effsize}{Include Cohen's d (default = T)}
+
+\item{sig}{The number of signficant digits for the output.}
+
 \item{formula}{Specify t-test using standard formula interface.}
 
 \item{data}{A data frame containing the variables in formula.}
-
-\item{sig}{The number of signficant digits for the output.}
 }
 \value{
 A character vector with 1 element.

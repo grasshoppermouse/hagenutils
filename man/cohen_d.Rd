@@ -4,12 +4,12 @@
 \alias{cohen_d}
 \title{Cohen's d}
 \usage{
-cohen_d(x, y)
+cohen_d(f, d)
 }
 \arguments{
-\item{x}{A numeric vector.}
+\item{f}{A two-sided formula: y ~ x.}
 
-\item{y}{A numeric vector.}
+\item{d}{A data frame.}
 }
 \value{
 Cohen's d
@@ -18,5 +18,5 @@ Cohen's d
 Cohen's d
 }
 \examples{
-cohen_d(x, y)
+cohen_d(mpg ~ am, mtcars)
 }

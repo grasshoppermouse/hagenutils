@@ -14,7 +14,7 @@ URL: http://github.com/grasshoppermouse/hagenutils
 BugReports: https://github.com/grasshoppermouse/hagenutils/issues
 Imports: broom, dplyr, tidyr, ggplot2, reshape2, ggalt, seriation, scales, viridis, ggnewscale, glue, effsize
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 NeedsCompilation: no
 Packaged: 2019-03-08 18:34:02 UTC; hagen
 Author: Ed Hagen [aut, cre]

@@ -31,19 +31,24 @@ predicted_prob = function(mod, df){
 
 #' Cohen's d
 #'
-#' @param x A numeric vector.
-#' @param y A numeric vector.
+#' @param f A two-sided formula: y ~ x.
+#' @param d A data frame.
 #' @return Cohen's d
 #' @examples
-#' cohen_d(x, y)
+#' cohen_d(mpg ~ am, mtcars)
 #' @export 
-cohen_d = function(x, y){
-  x <- na.omit(x)
-  y <- na.omit(y)
-  nx = length(x)
-  ny = length(y)
-  pooled_sd = sqrt(((nx-1)*sd(x)^2 + (ny-1)*sd(y)^2)/(nx + ny))
-  return((mean(x)-mean(y))/pooled_sd)
+cohen_d = function(f, d){
+  mf <- model.frame(f, data = d)
+  if (ncol(mf) != 2) stop('Formula must contain only 2 variables: y ~ x')
+  if (length(table(mf[[2]])) != 2) stop('factor must have exactly two values')
+  if (!mode(mf[[1]]) %in% c('integer', 'numeric')) stop('Left hand side must be a numeric variable')
+  names(mf) <- c('y', 'x')
+  x <-
+    mf %>% 
+    group_by(x) %>% 
+    summarise(n = n(), mean = mean(y, na.rm = T), sd2 = sd(y, na.rm = T)^2)
+  d <- (x$mean[1] - x$mean[2])/sqrt(((x$n[1]-1)*x$sd2[1] + (x$n[2]-1)*x$sd2[2])/(sum(x$n)-2))
+  return(d)
 }
 
 #' pca_loadings_plot
