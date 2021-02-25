@@ -4,7 +4,7 @@
 \alias{cohen_d}
 \title{Cohen's d}
 \usage{
-cohen_d(f, d)
+cohen_d(f, data, sig = 3)
 }
 \arguments{
 \item{f}{A two-sided formula: y ~ x.}

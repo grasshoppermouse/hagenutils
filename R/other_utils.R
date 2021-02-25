@@ -467,3 +467,58 @@ hagenheat <- function(
   }
   return(p)
 }
+
+#' @title regressiontable
+#' @description Create gt table of regression coefficients
+#' @param models Named list of lm and glm models.
+#' @param caption Optional caption for table, Default: NULL
+#' @param sigfig The number of significant digits to display, Default: 3
+#' @return A gt table
+#' @details Currently only supports lm and glm models
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  models <- list(
+#'  "model 1" = lm(mpg ~ hp, mtcars),
+#'  "model 2" = glm(am ~ hp, family=binomial, mtcars)
+#'  )
+#'  regressiontable(models)
+#'  }
+#' }
+#' @seealso 
+#'  \code{\link[broom]{tidy}}
+#'  \code{\link[gt]{gt}}
+#' @rdname regressiontable
+#' @export 
+#' @importFrom purrr map_df map
+#' @importFrom broom tidy glance
+#' @importFrom stringr str_glue_data
+#' @importFrom gt gt fmt_number tab_footnote cells_row_groups
+regressiontable <- function(models, caption = NULL, sigfig = 3){
+  
+  for (m in models){
+    if (!class(m)[1] %in% c('lm', 'glm')) stop('only lm and glm models are supported')
+  }
+  
+  model_stats <- purrr::map_df(models, ~broom::tidy(., conf.int = T), .id = 'Model')
+  names(model_stats) <- c('Model', 'Variable', 'Estimate', 'Std.Err', 'Statistic', 'P-value', 'Lower 95% CI', 'Upper 95% CI')
+  
+  glue_dict <- c(
+    'lm' = 'N={nobs}; Rsq={r.squared}; Adj.Rsq={adj.r.squared}; F({df},{df.residual})={statistic}; p={p.value}',
+    'glm' = 'N={nobs}; Null deviance={null.deviance} on {df.null} df; Residual deviance={deviance} on {df.residual} df'
+  )
+  
+  model_summaries <-
+    purrr::map(models, ~stringr::str_glue_data(signif(broom::glance(.), sigfig), glue_dict[class(.)[1]]))
+  
+  model_stats %>%
+    gt::gt(groupname_col = 'Model', caption = caption) %>%
+    gt::cols_label(Variable = '') %>% 
+    gt::fmt_number(c(3:5, 7:8), n_sigfig = sigfig) %>%
+    gt::fmt_scientific(6, decimals = 1) %>% 
+    gt::tab_footnote(model_summaries, gt::cells_row_groups()) %>% 
+    gt::tab_style(
+      style = gt::cell_text(indent = gt::px(40)),
+      locations = gt::cells_body(columns = 'Variable')
+    )
+}
