@@ -344,3 +344,25 @@ custom.summarize = function(df, vars, facvar=NULL, statscol=T, test_type='wilcox
   row.names(d) <- NULL
   return(d)
 }
+
+#' @title fmt_sci
+#' @description Generate latex for scientific notation
+#' @param x Numeric vector to be formatted
+#' @return latex character vector with x in scientific notation
+#' @details For use in inline markdown.
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  fmt_sci(2.34e-9)
+#'  }
+#' }
+#' @seealso 
+#'  \code{\link[glue]{glue}}
+#' @rdname fmt_sci
+#' @export 
+#' @importFrom glue glue
+fmt_sci <- function(x){
+  a <- floor(log10(abs(x)))
+  b <- x/(10^a)
+  return(glue::glue('{b} \\times 10^{{{a}}}'))
+}
