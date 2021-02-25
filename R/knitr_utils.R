@@ -240,6 +240,9 @@ inline_ttest <- function(ttest, effsize=NULL, sig=3){
   tstat <- signif(ttest$statistic, sig)
   dfstat <- signif(ttest$parameter, sig)
   p <- signif(ttest$p.value, sig)
+  if (p < 0.001){
+    p <- glue::glue('${fmt_sci(p)}$')
+  }
 
   if (!is.null(effsize)){
     return(
