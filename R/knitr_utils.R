@@ -8,6 +8,8 @@
 #' @param odds.ratio If TRUE, apply exponential transform to coefficients and omit intercept.
 #' @param breaks An optional vector of breaks for the plot x-axis.
 #' @param intercept If TRUE, include the intercept in the table and plot; otherwise omit.
+#' @param facet If TRUE, display models in different facets. Otherwise, distinguish by color.
+#' @param dodgewidth For position_dodge(). Default = 0.3.
 #' @param sig The number of signficant digits for the table.
 #' @return A named list. $plot has the plot. $table has the data frame of coefficients and stats.
 #' @examples
@@ -26,7 +28,10 @@ forestplot <- function(
     odds.ratio=F,
     breaks=NULL,
     intercept=T,
-    sig=3){
+    facet=T,
+    dodgewidth = 0.3,
+    sig=3
+    ){
 
     models <- list(...)
     # Hack
@@ -49,15 +54,15 @@ forestplot <- function(
 
         # ggplot params
         intr = 1
-        ylabel = '\nOdds ratio (95% CI)'
-        scle = ggplot2::scale_y_log10(breaks=breaks)
+        xlabel = '\nOdds ratio (95% CI)'
+        scle = ggplot2::scale_x_log10(breaks=breaks)
     }
     else {
 
         # ggplot params
         intr = 0
-        ylabel = '\nRegression coefficients (95% CI)'
-        scle = ggplot2::scale_y_continuous()
+        xlabel = '\nEstimate (95% CI)'
+        scle = ggplot2::scale_x_continuous()
 
     }
 
@@ -80,14 +85,24 @@ forestplot <- function(
 
     tidymodels$term = factor(tidymodels$term, levels=rev(names(varnames)), labels=rev(varnames))
 
-    p <- ggplot2::ggplot(tidymodels, ggplot2::aes(term, estimate, ymin=conf.low, ymax=conf.high)) +
-          ggplot2::geom_pointrange() +
-          ggplot2::geom_hline(yintercept=intr, linetype='longdash') +
-          ggplot2::facet_wrap(~model, ncol = length(models)) +
-          scle +
-          ggplot2::labs(x='', y=ylabel) +
-          ggplot2::coord_flip() +
-          ggplot2::theme_bw()
+    if (facet){
+      p <- 
+        ggplot2::ggplot(tidymodels, ggplot2::aes(estimate, term, xmin=conf.low, xmax=conf.high)) +
+        ggplot2::facet_wrap(~model, ncol = length(models))
+        
+    } else
+    {
+      p <- 
+        ggplot2::ggplot(tidymodels, ggplot2::aes(estimate, term, xmin=conf.low, xmax=conf.high, colour=model))
+    }
+    
+    p <- 
+      p +
+      ggplot2::geom_pointrange(position = position_dodge(width = dodgewidth)) +
+      ggplot2::geom_vline(xintercept=intr, linetype='longdash') +
+      scle +
+      ggplot2::labs(y='', x=xlabel) +
+      ggplot2::theme_bw()
 
     # Create nice table of coefficients
 

@@ -12,6 +12,8 @@ forestplot(
   odds.ratio = F,
   breaks = NULL,
   intercept = T,
+  facet = T,
+  dodgewidth = 0.3,
   sig = 3
 )
 }
@@ -29,6 +31,10 @@ forestplot(
 \item{breaks}{An optional vector of breaks for the plot x-axis.}
 
 \item{intercept}{If TRUE, include the intercept in the table and plot; otherwise omit.}
+
+\item{facet}{If TRUE, display models in different facets. Otherwise, distinguish by color.}
+
+\item{dodgewidth}{For position_dodge(). Default = 0.3.}
 
 \item{sig}{The number of signficant digits for the table.}
 }
