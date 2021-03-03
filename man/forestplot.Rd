@@ -14,6 +14,7 @@ forestplot(
   intercept = T,
   facet = T,
   dodgewidth = 0.3,
+  table = T,
   sig = 3
 )
 }
@@ -36,7 +37,9 @@ forestplot(
 
 \item{dodgewidth}{For position_dodge(). Default = 0.3.}
 
-\item{sig}{The number of signficant digits for the table.}
+\item{table}{Return a table. Default = TRUE.}
+
+\item{sig}{The number of significant digits for the table.}
 }
 \value{
 A named list. $plot has the plot. $table has the data frame of coefficients and stats.

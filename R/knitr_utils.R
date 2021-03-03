@@ -10,7 +10,8 @@
 #' @param intercept If TRUE, include the intercept in the table and plot; otherwise omit.
 #' @param facet If TRUE, display models in different facets. Otherwise, distinguish by color.
 #' @param dodgewidth For position_dodge(). Default = 0.3.
-#' @param sig The number of signficant digits for the table.
+#' @param table Return a table. Default = TRUE.
+#' @param sig The number of significant digits for the table.
 #' @return A named list. $plot has the plot. $table has the data frame of coefficients and stats.
 #' @examples
 #' data(mtcars)
@@ -30,6 +31,7 @@ forestplot <- function(
     intercept=T,
     facet=T,
     dodgewidth = 0.3,
+    table = T,
     sig=3
     ){
 
@@ -106,48 +108,51 @@ forestplot <- function(
 
     # Create nice table of coefficients
 
-    tidymodels2 <- tidymodels[c('model', 'term', 'estimate', 'conf.low', 'conf.high')]
-    tidymodels2[3:5] <- signif(tidymodels2[3:5], sig)
-
-    # Creates character string with: "estimate (low, high)"
-    est <- function(estimate, lower, upper){
-
+    if (table){
+      tidymodels2 <- tidymodels[c('model', 'term', 'estimate', 'conf.low', 'conf.high')]
+      tidymodels2[3:5] <- signif(tidymodels2[3:5], sig)
+      
+      # Creates character string with: "estimate (low, high)"
+      est <- function(estimate, lower, upper){
+        
         return(
-            paste0(estimate, ' (', lower, ', ', upper, ')')
+          paste0(estimate, ' (', lower, ', ', upper, ')')
         )
-    }
-
-    tidymodels2$est <- mapply(est, tidymodels2$estimate, tidymodels2$conf.low, tidymodels2$conf.high)
-    tbl <- reshape2::dcast(tidymodels2, term~model, value.var='est')
-    tbl <- dplyr::arrange(tbl, -row_number()) # Reverse order of rows
-    tbl <- tbl[c('term', modelnames)] # put columns into same order as modelnames
-
-    ### Add model stat rows to bottom of table ###
-
-    # Observations
-    obs_row <- sapply(models, FUN=nobs)
-    tbl <- rbind(tbl, c('Observations', obs_row))
-
-    # AIC
-    aic_row <- sapply(models, AIC)
-
-    if (class(aic_row) == 'matrix') aic_row <- aic_row[2,] # To handle the svyglm case
-    aic_row <- signif(aic_row, sig+1) # Hack extra sig fig for AIC
-    tbl <- rbind(tbl, c('AIC', aic_row))
-
-    # Optional stats
-    if (!is.null(stats)){
-      for (i in 1:length(stats)){
-        tbl <- rbind(tbl, c(names(stats)[i], stats[[i]]))
       }
-
-    }
-
-    tbl[is.na(tbl)] <- '' # Blank the NA's
-
-    return(
+      
+      tidymodels2$est <- mapply(est, tidymodels2$estimate, tidymodels2$conf.low, tidymodels2$conf.high)
+      tbl <- reshape2::dcast(tidymodels2, term~model, value.var='est')
+      tbl <- dplyr::arrange(tbl, -row_number()) # Reverse order of rows
+      tbl <- tbl[c('term', modelnames)] # put columns into same order as modelnames
+      
+      ### Add model stat rows to bottom of table ###
+      
+      # Observations
+      obs_row <- sapply(models, FUN=nobs)
+      tbl <- rbind(tbl, c('Observations', obs_row))
+      
+      # AIC
+      aic_row <- sapply(models, AIC)
+      
+      if (class(aic_row) == 'matrix') aic_row <- aic_row[2,] # To handle the svyglm case
+      aic_row <- signif(aic_row, sig+1) # Hack extra sig fig for AIC
+      tbl <- rbind(tbl, c('AIC', aic_row))
+      
+      # Optional stats
+      if (!is.null(stats)){
+        for (i in 1:length(stats)){
+          tbl <- rbind(tbl, c(names(stats)[i], stats[[i]]))
+        }
+        
+      }
+      
+      tbl[is.na(tbl)] <- '' # Blank the NA's
+      
+      return(
         list(plot=p, table=tbl)
-    )
+      )
+    }
+  return(p)
 }
 
 #' logistic_forestplot
