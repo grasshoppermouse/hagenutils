@@ -4,10 +4,12 @@
 \alias{ggemmeans}
 \title{ggemmeans}
 \usage{
-ggemmeans(em, reorder = T)
+ggemmeans(em, by = NULL, reorder = T)
 }
 \arguments{
 \item{em}{An emmeans object}
+
+\item{by}{String indicating "by" term (conditioning variable)}
 
 \item{reorder}{If TRUE (default), reorder levels of a categorical predictor by values of the estimate}
 }
@@ -23,8 +25,9 @@ This function is similar to the emmeans plot function, except that it sorts the 
 \examples{
 \dontrun{
 if(interactive()){
+ data(starwars, package='dplyr')
  m <- lm(height ~ eye_color, starwars)
- em <- emmeans(m, spec = 'eye_color')
+ em <- emmeans(m, specs = 'eye_color')
  ggemmeans(em)
  }
 }

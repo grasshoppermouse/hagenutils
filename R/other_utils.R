@@ -268,20 +268,22 @@ scale_fill_binary<- function(direction=1, ...){
 #' @title ggemmeans
 #' @description ggplot of estimated marginal means object, with categorical spec variable sorted by estimate
 #' @param em An emmeans object
+#' @param by String indicating "by" term (conditioning variable)
 #' @param reorder If TRUE (default), reorder levels of a categorical predictor by values of the estimate
 #' @return a ggplot object
 #' @details This function is similar to the emmeans plot function, except that it sorts the levels of a categorical variable by the estimated mean
 #' @examples 
 #' \dontrun{
 #' if(interactive()){
+#'  data(starwars, package='dplyr')
 #'  m <- lm(height ~ eye_color, starwars)
-#'  em <- emmeans(m, spec = 'eye_color')
+#'  em <- emmeans(m, specs = 'eye_color')
 #'  ggemmeans(em)
 #'  }
 #' }
 #' @rdname ggemmeans
 #' @export 
-ggemmeans <- function(em, reorder = T){
+ggemmeans <- function(em, by = NULL, reorder = T){
   emsum <- summary(em)
   estName <- attr(emsum, 'estName')
   clNames <- attr(emsum, 'clNames')
@@ -289,9 +291,17 @@ ggemmeans <- function(em, reorder = T){
   if (reorder & is.factor(emsum[[var]])){
     emsum[var] <- forcats::fct_reorder(emsum[[var]], emsum[[estName]])
   }
-  ggplot(emsum, aes_string(estName, var, xmin = clNames[1], xmax = clNames[2])) +
-    geom_errorbarh(height = 0, lwd = 2.5, alpha = 0.3) +
-    geom_point() +
+  
+  if (is.null(by)){
+    p <- ggplot(emsum, aes_string(estName, var, xmin = clNames[1], xmax = clNames[2]))
+  } else {
+    p <- ggplot(emsum, aes_string(estName, var, xmin = clNames[1], xmax = clNames[2], colour = by))
+  }
+  
+  p +
+    geom_pointrange(lwd = 2.5, alpha = 0.7, position = position_dodge(width = 0.25), fatten = 1) +
+    # geom_point(position = position_dodge(width = 0.25)) +
+    guides(colour = guide_legend(override.aes = list(size = 1))) +
     theme_minimal(15)
 }
 
