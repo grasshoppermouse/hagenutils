@@ -4,10 +4,16 @@
 \alias{fmt_terms}
 \title{fmt_terms}
 \usage{
-fmt_terms(models)
+fmt_terms(
+  models,
+ 
+    str = "$\\\\beta={signif(estimate, 2)}$ ({signif(conf.low, 2)}, {signif(conf.high, 2)})"
+)
 }
 \arguments{
 \item{models}{A named list of models}
+
+\item{str}{A glue format string, Default: '$\\\\beta={signif(estimate, 2)}$ ({signif(conf.low, 2)}, {signif(conf.high, 2)})'}
 }
 \value{
 A name list of model statistics, including str, a string version of the term estimate.

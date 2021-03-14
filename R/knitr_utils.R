@@ -393,6 +393,7 @@ fmt_sci <- function(x){
 #' @title fmt_terms
 #' @description Format estimate and 95\% CIs for inline markdown
 #' @param models A named list of models
+#' @param str A glue format string, Default: '$\\\\beta={signif(estimate, 2)}$ ({signif(conf.low, 2)}, {signif(conf.high, 2)})'
 #' @return A name list of model statistics, including str, a string version of the term estimate.
 #' @details Provide a named list of regression models, and the resulting named list will have a formatted string suitable for inline rmarkdown
 #' @examples 
@@ -403,14 +404,14 @@ fmt_sci <- function(x){
 #'  }
 #' }
 #' @rdname fmt_terms
-#' @export 
-fmt_terms <- function(models){
+#' @export
+fmt_terms <- function(models, str = "$\\beta={signif(estimate, 2)}$ ({signif(conf.low, 2)}, {signif(conf.high, 2)})"){
   tdy <- function(m){
     tidy(m, conf.int = T) %>% 
       mutate(
-        str = glue("$\\beta={signif(estimate, 2)}$ ({signif(conf.low, 2)}, {signif(conf.high,2)})")
+        str = glue(str)
       ) %>% 
-      split(., .$term)
+      split(.$term)
   }
   map(models, tdy)
 }
