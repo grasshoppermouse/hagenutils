@@ -389,3 +389,28 @@ fmt_sci <- function(x){
   b <- x/(10^a)
   return(glue::glue('{b} \\times 10^{{{a}}}'))
 }
+
+#' @title fmt_terms
+#' @description Format estimate and 95\% CIs for inline markdown
+#' @param models A named list of models
+#' @return A name list of model statistics, including str, a string version of the term estimate.
+#' @details Provide a named list of regression models, and the resulting named list will have a formatted string suitable for inline rmarkdown
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  stats <- fmt_terms(list(m1 = lm(mpg ~ hp, mtcars), m2 = lm(mpg ~ wt, mtcars)))
+#'  stats$m1$hp$str
+#'  }
+#' }
+#' @rdname fmt_terms
+#' @export 
+fmt_terms <- function(models){
+  tdy <- function(m){
+    tidy(m, conf.int = T) %>% 
+      mutate(
+        str = glue("$\\beta={signif(estimate, 2)}$ ({signif(conf.low, 2)}, {signif(conf.high,2)})")
+      ) %>% 
+      split(., .$term)
+  }
+  map(models, tdy)
+}

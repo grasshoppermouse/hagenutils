@@ -3,6 +3,7 @@
 export(cohen_d)
 export(custom.summarize)
 export(fmt_sci)
+export(fmt_terms)
 export(forestplot)
 export(ggdotchart)
 export(ggemmeans)
