@@ -290,7 +290,8 @@ inline_ttest <- function(ttest, effsize=NULL, sig=3){
 #' custom.summarize(mtcars, vars, facvar='am')
 #' @export 
 custom.summarize = function(df, vars, facvar=NULL, statscol=T, test_type='wilcox', sig.digits=2){
-
+  
+  if(is.null(names(vars))) stop('vars variable must be a named variable')
   sum_stats <- function(df, var.names){
     
     d <- data.frame(
