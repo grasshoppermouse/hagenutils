@@ -532,3 +532,48 @@ regressiontable <- function(models, caption = NULL, sigfig = 3){
       locations = gt::cells_body(columns = 'Variable')
     )
 }
+
+#' @title ggmediation
+#' @description Plot ACME and ADE from objects produced by mediate function in mediation package
+#' @param obj An object produced by the mediate function from the mediation package.
+#' @return A ggplot
+#' @details Produces a ggplot version of the mediation plot from the mediation package.
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  library(mediation)
+#'  m_med <- lm(hp ~ wt, mtcars)
+#'  m_out <- lm(mpg ~ hp + wt, mtcars)
+#'  m <- mediate(m_med, m_out, treat='wt', mediator='hp')
+#'  ggmediation(m)
+#'  }
+#' }
+#' @rdname ggmediation
+#' @export 
+ggmediation <- function(obj){
+  d <-
+    tibble(
+      ACME.point = obj$d.avg,
+      ACME.low = obj$d.avg.ci[1],
+      ACME.high = obj$d.avg.ci[2],
+      ADE.point = obj$z.avg,
+      ADE.low = obj$z.avg.ci[1],
+      ADE.high = obj$z.avg.ci[2],
+      Total.point = obj$tau.coef,
+      Total.low = obj$tau.ci[1],
+      Total.high = obj$tau.ci[2]
+    ) %>%
+    pivot_longer(everything()) %>%
+    separate(name, into = c('Stat', 'type'), sep = '\\.') %>%
+    pivot_wider(names_from = type, values_from = value)
+  
+  p <-
+    ggplot(d, aes(point, Stat, xmin=low, xmax=high)) +
+    geom_pointrange(lwd=1.5, fatten = 2) +
+    labs(caption = paste0('Proportion mediated: ', signif(100*obj$n.avg, 2), '%'), x='', y='') +
+    theme_minimal(15)
+  
+  if (all(c(d$low, d$high) < 0)) p <- p + xlim(c(NA, 0))
+  if (all(c(d$low, d$high) > 0)) p <- p + xlim(c(0, NA))
+  return(p)
+}
