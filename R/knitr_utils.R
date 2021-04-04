@@ -241,7 +241,7 @@ logistic_forestplot <- function(...,
 #'
 #' @param formula Specify t-test using standard formula interface.
 #' @param data A data frame containing the variables in formula.
-#' @param effsize Include Cohen's d (default = T)
+#' @param effsize Include a user-supplied effect size (default = NULL)
 #' @param sig The number of signficant digits for the output.
 #' @return A character vector with 1 element.
 #' @examples
@@ -253,27 +253,34 @@ logistic_forestplot <- function(...,
 #' out <- forestplot(m1, m2, modelsnames=mnms, varnames=vnms)
 #' @export
 inline_ttest <- function(ttest, effsize=NULL, sig=3){
-
+  
   # ttest <- t.test(formula, data=data)
-  m1 <- signif(ttest$estimate[1], sig)
-  m2 <- signif(ttest$estimate[2], sig)
   tstat <- signif(ttest$statistic, sig)
-  dfstat <- signif(ttest$parameter, sig)
+  dfstat <- round(ttest$parameter, 1)
   p <- signif(ttest$p.value, sig)
+  
+  if (ttest$method == "Paired t-test"){
+    m1 <- signif(ttest$estimate, sig)
+    mean_txt <- glue::glue('Mean diff. = {m1}')
+  } else {
+    m1 <- signif(ttest$estimate[1], sig)
+    m2 <- signif(ttest$estimate[2], sig)
+    mean_txt <- glue::glue('M = {m2} vs. M = {m1}')
+  }
+  
   if (p < 0.001){
     p <- glue::glue('${fmt_sci(p)}$')
   }
-
-  if (!is.null(effsize)){
+  
+  if (is.null(effsize)){
     return(
-      glue::glue('M = {m2} vs. M = {m1}; t({dfstat}) = {tstat}, p = {p}, d = {effsize}')
+      glue::glue('{mean_txt}, t({dfstat}) = {tstat}, p = {p}')
     )
   } else {
     return(
-      glue::glue('M = {m2} vs. M = {m1}; t({dfstat}) = {tstat}, p = {p}')
+      glue::glue('{mean_txt}, t({dfstat}) = {tstat}, p = {p}, d = {effsize}')
     )
   }
-
 }
 
 #' Output summary table split by a categorical variable
