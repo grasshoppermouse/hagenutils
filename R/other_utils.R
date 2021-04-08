@@ -68,9 +68,10 @@ cohen_d = function(f, data, sig = 3){
 #' @export 
 pca_loadings_plot <- function(obj, components = 1:3, sortby = 1){
     require(dplyr)
-    varprop <- summary(obj)$importance[2,components] # Get % variance
-    if(length(varprop)>1) nms <- names(varprop)
-    else nms <- 'PC1'
+    pca_summ <- summary(obj)
+    comp_nms <- colnames(pca_summ$importance)
+    varprop <- pca_summ$importance[2,components] # Get % variance
+    nms <- comp_nms[components]
     varprop <- paste0(nms, ' (', round(varprop*100, 1), '%)')
     names(varprop) <- nms
     loadings <- obj$rotation[,components, drop = F]
