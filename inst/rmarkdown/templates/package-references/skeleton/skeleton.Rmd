@@ -1,0 +1,12 @@
+---
+title: "Package references"
+output: pdf_document
+nocite: '@*'
+bibliography: packages.bib
+---
+
+```{r setup, include=FALSE}
+knitr::write_bib(renv::dependencies()$Package, file = 'packages.bib')
+```
+
+# References

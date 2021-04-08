@@ -1,0 +1,4 @@
+name: Package references
+description: >
+   Knitting will create a document with references for all packages used in the project
+create_dir: FALSE

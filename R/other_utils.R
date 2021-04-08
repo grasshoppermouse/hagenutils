@@ -69,7 +69,8 @@ cohen_d = function(f, data, sig = 3){
 pca_loadings_plot <- function(obj, components = 1:3, sortby = 1){
     require(dplyr)
     varprop <- summary(obj)$importance[2,components] # Get % variance
-    nms <- names(varprop)
+    if(length(varprop)>1) nms <- names(varprop)
+    else nms <- 'PC1'
     varprop <- paste0(nms, ' (', round(varprop*100, 1), '%)')
     names(varprop) <- nms
     loadings <- obj$rotation[,components, drop = F]
@@ -576,4 +577,15 @@ ggmediation <- function(obj){
   if (all(c(d$low, d$high) < 0)) p <- p + xlim(c(NA, 0))
   if (all(c(d$low, d$high) > 0)) p <- p + xlim(c(0, NA))
   return(p)
+}
+
+codebib <- function(){
+  
+  addkey <- function(x){
+    x$key <- paste0(x$author$family[[1]], x$year[[1]], sample(letters,1), sample(letters,1))
+    return(x)
+  }
+  
+  d <- renv::dependencies() %>% dplyr::filter(Package != 'R')
+  map(d$Package, ~toBibtex(addkey(citation(.x))))
 }
