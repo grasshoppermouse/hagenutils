@@ -268,17 +268,21 @@ inline_ttest <- function(ttest, effsize=NULL, sig=3){
     mean_txt <- glue::glue('M = {m2} vs. M = {m1}')
   }
   
-  if (p < 0.001){
-    p <- glue::glue('${fmt_sci(p)}$')
+  if (p < 2e-16){
+    p <- glue::glue('$p<{fmt_sci(2.2e-16)}$')
+  } else if (p < 0.001){
+    p <- glue::glue('$p={fmt_sci(p)}$')
+  } else {
+    p <- glue::glue('$p={p}$')
   }
   
   if (is.null(effsize)){
     return(
-      glue::glue('{mean_txt}, t({dfstat}) = {tstat}, p = {p}')
+      glue::glue('{mean_txt}, t({dfstat}) = {tstat}, {p}')
     )
   } else {
     return(
-      glue::glue('{mean_txt}, t({dfstat}) = {tstat}, p = {p}, d = {effsize}')
+      glue::glue('{mean_txt}, t({dfstat}) = {tstat}, {p}, d = {effsize}')
     )
   }
 }
