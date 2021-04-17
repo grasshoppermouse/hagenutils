@@ -657,6 +657,7 @@ ggxtabs <- function(xtab, cell_counts = F, viridis_option = 'B', border_color = 
     scale_y_continuous(limits = c(0, 1.05)) +
     guides(fill = guide_legend(reverse = T)) +
     coord_cartesian(clip = 'off') +
-    # labs(x = nms[2], y = nms[1]) +
-    theme_void()
+    xlab(nms[2]) +
+    theme_void() +
+    theme(axis.title = element_text())
 }
