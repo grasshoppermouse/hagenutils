@@ -4,14 +4,14 @@
 \alias{ggxtabs}
 \title{ggxtabs}
 \usage{
-ggxtabs(xtab, cell_counts = F, viridis_option = "B", border_color = "white")
+ggxtabs(xtab, cell_counts = F, viridis_option = "G", border_color = "white")
 }
 \arguments{
 \item{xtab}{xtabs object of exactly two categorical variables}
 
 \item{cell_counts}{Display cell counts, Default: F}
 
-\item{viridis_option}{Viridis color palette, Default: 'B'}
+\item{viridis_option}{Viridis color palette, Default: 'G'}
 
 \item{border_color}{Color of border between cells, Default: 'white'}
 }
