@@ -590,3 +590,72 @@ codebib <- function(){
   d <- renv::dependencies() %>% dplyr::filter(Package != 'R')
   map(d$Package, ~toBibtex(addkey(citation(.x))))
 }
+
+#' @title ggxtabs
+#' @description Mosaic ggplot of xtabs object
+#' @param xtab xtabs object of exactly two categorical variables
+#' @param cell_counts Display cell counts, Default: F
+#' @param viridis_option Viridis color palette, Default: 'B'
+#' @return ggplot
+#' @details Takes a table of exactly two categorical variables produced by xtabs and produces a ggplot mosaic plot
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  ggxtabs(xtabs(~color+clarity, diamonds), viridis_option = 'H')
+#'  }
+#' }
+#' @rdname ggxtabs
+#' @export 
+ggxtabs <- function(xtab, cell_counts = F, viridis_option = 'B'){
+  if (!"xtabs" %in% class(xtab)) stop('xtab must be an xtabs object')
+  d <- as_tibble(xtab)
+  if (ncol(d) != 3) stop('Two categorical variables only')
+  
+  # put levels in order
+  d[[1]] <- factor(d[[1]], levels = unique(d[[1]]))
+  d[[2]] <- factor(d[[2]], levels = unique(d[[2]]))
+  
+  nms <- names(d)
+  d2 <-
+    d %>% 
+    group_by(across(2)) %>% 
+    summarise(sum = sum(n)) %>% 
+    mutate(
+      xmax = cumsum(sum),
+      xmin = c(0, xmax[1:length(xmax)-1]),
+      xmid = (xmin + xmax)/2
+    )
+  d <- 
+    left_join(d, d2) %>% 
+    group_by(across(2)) %>% 
+    mutate(
+      ymax = cumsum(n)/sum(n),
+      ymin = c(0, ymax[1:length(ymax)-1]),
+      ymid = (ymin + ymax)/2
+    )
+  
+  d3 <- unique(d[c(2, 7)])
+  
+  # Dealing with ggplot weirdness (or my ignorance)
+  d3$xmin = 0
+  d3$xmax = 0
+  d3$ymin = 0
+  d3$ymax = 0
+  
+  p <- 
+    ggplot(d, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)) + 
+    geom_rect(aes_string(fill=nms[1]), color='black') 
+
+  if (cell_counts){
+    p <- p + geom_label(aes(x=xmid, y = ymid, label = n), label.size=0)
+  }  
+
+    p +
+    geom_text(data=d3, aes_string(x='xmid', label=nms[2]), y = 1.05) +
+    scale_fill_viridis_d(option = viridis_option) +
+    scale_y_continuous(limits = c(0, 1.05)) +
+    guides(fill = guide_legend(reverse = T)) +
+    coord_cartesian(clip = 'off') +
+    # labs(x = nms[2], y = nms[1]) +
+    theme_void()
+}

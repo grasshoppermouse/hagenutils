@@ -7,7 +7,7 @@
 inline_ttest(ttest, effsize = NULL, sig = 3)
 }
 \arguments{
-\item{effsize}{Include Cohen's d (default = T)}
+\item{effsize}{Include a user-supplied effect size (default = NULL)}
 
 \item{sig}{The number of signficant digits for the output.}
 
