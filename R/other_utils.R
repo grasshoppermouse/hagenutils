@@ -596,6 +596,7 @@ codebib <- function(){
 #' @param xtab xtabs object of exactly two categorical variables
 #' @param cell_counts Display cell counts, Default: F
 #' @param viridis_option Viridis color palette, Default: 'B'
+#' @param border_color Color of border between cells, Default: 'white'
 #' @return ggplot
 #' @details Takes a table of exactly two categorical variables produced by xtabs and produces a ggplot mosaic plot
 #' @examples 
@@ -606,7 +607,7 @@ codebib <- function(){
 #' }
 #' @rdname ggxtabs
 #' @export 
-ggxtabs <- function(xtab, cell_counts = F, viridis_option = 'B'){
+ggxtabs <- function(xtab, cell_counts = F, viridis_option = 'B', border_color = 'white'){
   if (!"xtabs" %in% class(xtab)) stop('xtab must be an xtabs object')
   d <- as_tibble(xtab)
   if (ncol(d) != 3) stop('Two categorical variables only')
@@ -644,7 +645,7 @@ ggxtabs <- function(xtab, cell_counts = F, viridis_option = 'B'){
   
   p <- 
     ggplot(d, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)) + 
-    geom_rect(aes_string(fill=nms[1]), color='black') 
+    geom_rect(aes_string(fill=nms[1]), color=border_color) 
 
   if (cell_counts){
     p <- p + geom_label(aes(x=xmid, y = ymid, label = n), label.size=0)
