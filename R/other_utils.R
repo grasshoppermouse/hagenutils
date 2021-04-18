@@ -595,6 +595,7 @@ codebib <- function(){
 #' @description Mosaic ggplot of xtabs object
 #' @param xtab xtabs object of exactly two categorical variables
 #' @param cell_counts Display cell counts, Default: F
+#' @param stats Display Chisq stats in caption, Default: F
 #' @param viridis_option Viridis color palette, Default: 'G'
 #' @param border_color Color of border between cells, Default: 'white'
 #' @return ggplot
@@ -608,7 +609,7 @@ codebib <- function(){
 #' @import dplyr tidyr tibble ggplot2
 #' @rdname ggxtabs
 #' @export 
-ggxtabs <- function(xtab, cell_counts = F, viridis_option = 'G', border_color = 'white'){
+ggxtabs <- function(xtab, cell_counts = F, stats = F, viridis_option = 'G', border_color = 'white'){
   if (!"xtabs" %in% class(xtab)) stop('xtab must be an xtabs object')
   d <- as_tibble(xtab)
   if (ncol(d) != 3) stop('Two categorical variables only')
@@ -651,6 +652,12 @@ ggxtabs <- function(xtab, cell_counts = F, viridis_option = 'G', border_color = 
   if (cell_counts){
     p <- p + geom_label(aes(x=xmid, y = ymid, label = n), label.size=0)
   }  
+  
+  if (stats){
+    st <- summary(xtab)
+    stat_str <- glue::glue("N={st$n.cases}, χ²={signif(st$statistic, 3)}, df={st$parameter}, p={signif(st$p.value, 2)}")
+    p <- p + labs(caption=stat_str)
+  }
   
   p +
     geom_text(data=d3, aes_string(x='xmid', label=nms[2]), y = 1.05) +

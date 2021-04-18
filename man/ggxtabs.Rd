@@ -4,12 +4,20 @@
 \alias{ggxtabs}
 \title{ggxtabs}
 \usage{
-ggxtabs(xtab, cell_counts = F, viridis_option = "G", border_color = "white")
+ggxtabs(
+  xtab,
+  cell_counts = F,
+  stats = F,
+  viridis_option = "G",
+  border_color = "white"
+)
 }
 \arguments{
 \item{xtab}{xtabs object of exactly two categorical variables}
 
 \item{cell_counts}{Display cell counts, Default: F}
+
+\item{stats}{Display Chisq stats in caption, Default: F}
 
 \item{viridis_option}{Viridis color palette, Default: 'G'}
 
