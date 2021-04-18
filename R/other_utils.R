@@ -605,6 +605,7 @@ codebib <- function(){
 #'  ggxtabs(xtabs(~color+clarity, diamonds), viridis_option = 'H')
 #'  }
 #' }
+#' @import dplyr tidyr tibble ggplot2
 #' @rdname ggxtabs
 #' @export 
 ggxtabs <- function(xtab, cell_counts = F, viridis_option = 'G', border_color = 'white'){
@@ -646,12 +647,12 @@ ggxtabs <- function(xtab, cell_counts = F, viridis_option = 'G', border_color = 
   p <- 
     ggplot(d, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)) + 
     geom_rect(aes_string(fill=nms[1]), color=border_color) 
-
+  
   if (cell_counts){
     p <- p + geom_label(aes(x=xmid, y = ymid, label = n), label.size=0)
   }  
-
-    p +
+  
+  p +
     geom_text(data=d3, aes_string(x='xmid', label=nms[2]), y = 1.05) +
     scale_fill_viridis_d(option = viridis_option) +
     scale_y_continuous(limits = c(0, 1.05)) +
@@ -659,5 +660,5 @@ ggxtabs <- function(xtab, cell_counts = F, viridis_option = 'G', border_color = 
     coord_cartesian(clip = 'off') +
     xlab(nms[2]) +
     theme_void() +
-    theme(axis.title = element_text())
+    theme(axis.title.x = element_text())
 }
