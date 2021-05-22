@@ -15,7 +15,9 @@ hagenheat(
   viridis_option = "D",
   wrap_labels = T,
   rotate_labels = F,
-  ann_col = NULL
+  ann_col = NULL,
+  rev_col = F,
+  rev_row = F
 )
 }
 \arguments{
@@ -39,6 +41,10 @@ hagenheat(
 
 \item{ann_col}{A data frame with two variables. The first column must be the names of the columns of 'd'. The second column contains the annotation values.}
 
+\item{rev_col}{Reverse column order. Default: F}
+
+\item{rev_row}{Reverse row order. Default: F}
+
 \item{dist}{Distance method from dist, Default: 'euclidean'}
 }
 \value{
@@ -58,7 +64,7 @@ Seriation methods for matrices and data frames when \code{independent=F}: \code{
 \examples{
 \dontrun{
 if(interactive()){
- hagenheat(mtcars, scale. = 'col')
+ hagenheat(mtcars, scale. = 'column')
  }
 }
 }

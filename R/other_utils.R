@@ -155,8 +155,8 @@ svysmooth2df <-
 
     df <-
       tibble::data_frame(
-        flatten_dbl(x),
-        flatten_dbl(y),
+        purrr::flatten_dbl(x),
+        purrr::flatten_dbl(y),
         Smooth
       )
 
@@ -320,6 +320,8 @@ ggemmeans <- function(em, by = NULL, reorder = T){
 #' @param wrap_labels Logical. Wrap the x-axis labels. Default: T
 #' @param rotate_labels Logical. Rotate the x-axis labels by 90 degrees. Default: F
 #' @param ann_col A data frame with two variables. The first column must be the names of the columns of 'd'. The second column contains the annotation values.
+#' @param rev_col Reverse column order. Default: F
+#' @param rev_row Reverse row order. Default: F
 #' @return A ggplot object
 #' @details Produces a very simple ggplot heatmap using viridis colors. 
 #' Rows and columns are ordered using the \code{seriation} package.
@@ -330,7 +332,7 @@ ggemmeans <- function(em, by = NULL, reorder = T){
 #' @examples 
 #' \dontrun{
 #' if(interactive()){
-#'  hagenheat(mtcars, scale. = 'col')
+#'  hagenheat(mtcars, scale. = 'column')
 #'  }
 #' }
 #' @seealso 
@@ -355,7 +357,9 @@ hagenheat <- function(
   viridis_option = 'D',
   wrap_labels = T,
   rotate_labels = F,
-  ann_col = NULL
+  ann_col = NULL,
+  rev_col = F,
+  rev_row = F
   ){
   
   if (inherits(d, 'dist')){
@@ -414,7 +418,6 @@ hagenheat <- function(
         row_order <- seriation::get_order(o)
         o <- seriation::seriate(dist(t(d), method = dist_method), method=seriation_method)
         col_order <- seriation::get_order(o)
-        
       } else {
         
         o <- seriation::seriate(d, method=seriation_method)
@@ -436,6 +439,9 @@ hagenheat <- function(
       
     }
   }
+  
+  if (rev_row) row_order <- rev(row_order)
+  if (rev_col) col_order <- rev(col_order)
   
   if (scale. == 'row'){
     d <- as_tibble(t(scale(t(d))))
