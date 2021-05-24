@@ -511,7 +511,7 @@ hagenheat <- function(
 #' @importFrom purrr map_df map
 #' @importFrom broom tidy glance
 #' @importFrom stringr str_glue_data
-#' @importFrom gt gt fmt_number tab_footnote cells_row_groups
+#' @importFrom gt gt cols_label fmt_number fmt_scientific tab_footnote tab_style cells_row_groups cell_text cells_body
 regressiontable <- function(models, caption = NULL, sigfig = 3){
   
   for (m in models){
