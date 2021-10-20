@@ -675,3 +675,41 @@ ggxtabs <- function(xtab, cell_counts = F, stats = F, viridis_option = 'G', bord
     theme_void() +
     theme(axis.title.x = element_text())
 }
+
+#' @title model_stats
+#' @description Return a named list of estimates, standard errors, and p-values for one or more regression models.
+#' @param ... Either a singal regression model object, or multiple named models, e.g., m1 = m1, m2 = m2, ...
+#' @return A named list of model parameters and statistics
+#' @details Uses the tidy functions from broom and broom.mixed to return a named list of model stats that can be easily used inline in rmarkdown documents.
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  m1 <- lm(mpg ~ hp, mtcars)
+#'  m2 <- lm(mpg ~ wt, mtcars)
+#'  x <- model_stats(m1 = m1, m2 = m2)
+#'  
+#'  x$m1$hp$estimate
+#'  x$m1$hp$str # formatted beta coefficient with 95% CI.
+#'  }
+#' }
+#' @seealso 
+#'  \code{\link[broom.mixed]{reexports}}
+#'  \code{\link[glue]{glue}}
+#' @rdname model_stats
+#' @export 
+#' @importFrom broom.mixed tidy
+#' @importFrom glue glue
+model_stats <- function(...){
+  tdy <- function(m){
+    broom.mixed::tidy(m, conf.int = T) %>% 
+      mutate(
+        str = glue::glue("$\\beta={signif(estimate, 2)}$ ({signif(conf.low, 2)}, {signif(conf.high, 2)})")
+      ) %>% 
+      split(.$term)
+  }
+  models <- list(...)
+  if (length(models) == 1) return(tdy(models[[1]]))
+  nms <- names(models)
+  if (is.null(nms) | "" %in% nms) stop('all models must be named, e.g., m1 = m, ...')
+  map(models, tdy)
+}
