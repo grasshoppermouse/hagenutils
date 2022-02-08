@@ -515,19 +515,43 @@ hagenheat <- function(
 regressiontable <- function(models, caption = NULL, sigfig = 3){
   
   for (m in models){
-    if (!class(m)[1] %in% c('lm', 'glm')) stop('only lm and glm models are supported')
+    if (!class(m)[1] %in% c('lm', 'glm', 'lmerModLmerTest')) stop('only lm, glm, and lmerModLmerTest models are supported')
   }
   
-  model_stats <- purrr::map_df(models, ~broom::tidy(., conf.int = T), .id = 'Model')
+  tidy2 <- function(m){
+    if (class(m)[1] == 'lmerModLmerTest'){
+      x <- broom::tidy(m, conf.int = T)
+      x <- x[x$effect == 'fixed',]
+      x$effect <- NULL
+      x$group <- NULL
+      x$df <- NULL
+      return(x)
+    } else {
+      return(broom::tidy(m, conf.int = T))
+    }
+  }
+  
+  glance2 <- function(m){
+    if (class(m)[1] == 'lmerModLmerTest'){
+      x <- broom::glance(m)
+      x$nobs <- nobs(m)
+      return(x)
+    } else {
+      return(broom::glance(m))
+    }
+  }
+  
+  model_stats <- purrr::map_df(models, ~tidy2(.), .id = 'Model')
   names(model_stats) <- c('Model', 'Variable', 'Estimate', 'Std.Err', 'Statistic', 'P-value', 'Lower 95% CI', 'Upper 95% CI')
   
   glue_dict <- c(
     'lm' = 'N={nobs}; Rsq={r.squared}; Adj.Rsq={adj.r.squared}; F({df},{df.residual})={statistic}; p={p.value}',
-    'glm' = 'N={nobs}; Null deviance={null.deviance} on {df.null} df; Residual deviance={deviance} on {df.residual} df'
+    'glm' = 'N={nobs}; Null deviance={null.deviance} on {df.null} df; Residual deviance={deviance} on {df.residual} df',
+    'lmerModLmerTest' = 'N={nobs}; Sigma={sigma}; df.residual={df.residual}'
   )
   
   model_summaries <-
-    purrr::map(models, ~stringr::str_glue_data(signif(broom::glance(.), sigfig), glue_dict[class(.)[1]]))
+    purrr::map(models, ~stringr::str_glue_data(signif(glance2(.), sigfig), glue_dict[class(.)[1]]))
   
   model_stats %>%
     gt::gt(groupname_col = 'Model', caption = caption) %>%
