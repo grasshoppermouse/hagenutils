@@ -66,17 +66,22 @@ cohen_d = function(f, data, sig = 3){
 #' m <- prcomp(mtcars, scale = T)
 #' pca_loadings_plot(m, components = c(1,2))
 #' @export 
-pca_loadings_plot <- function(obj, components = 1:3, sortby = 1){
-    require(dplyr)
-    pca_summ <- summary(obj)
-    comp_nms <- colnames(pca_summ$importance)
-    varprop <- pca_summ$importance[2,components] # Get % variance
-    nms <- comp_nms[components]
-    varprop <- paste0(nms, ' (', round(varprop*100, 1), '%)')
-    names(varprop) <- nms
-    loadings <- obj$rotation[,components, drop = F]
-    loadings %>%
-    data.frame %>%
+pca_loadings_plot <- function(obj, components = 1:3, sortby = 1, threshold = 0){
+  require(dplyr)
+  pca_summ <- summary(obj)
+  comp_nms <- colnames(pca_summ$importance)
+  varprop <- pca_summ$importance[2,components] # Get % variance
+  nms <- comp_nms[components]
+  varprop <- paste0(nms, ' (', round(varprop*100, 1), '%)')
+  names(varprop) <- nms
+  
+  loadings <- 
+    obj$rotation[,components, drop = F] %>%
+    data.frame
+  
+  loadings <- loadings[rowSums(abs(loadings)>threshold)>0,] 
+  
+  loadings %>%
     dplyr::mutate(Variable = forcats::fct_reorder(rownames(.), loadings[, sortby])) %>%
     tidyr::gather(key = PC, value = Loading, -Variable) %>%
     dplyr::mutate(PC = varprop[PC]) %>%
