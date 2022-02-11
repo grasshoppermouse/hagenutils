@@ -4,7 +4,7 @@
 \alias{pca_loadings_plot}
 \title{pca_loadings_plot}
 \usage{
-pca_loadings_plot(obj, components = 1:3, sortby = 1)
+pca_loadings_plot(obj, components = 1:3, sortby = 1, threshold = 0)
 }
 \arguments{
 \item{obj}{Output of prcomp}

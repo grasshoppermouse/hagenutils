@@ -61,7 +61,6 @@ cohen_d = function(f, data, sig = 3){
 #' @param components A numeric vector of components to plot
 #' @param sortby Sort variables by loadings on this component (index to component vector)
 #' @return ggplot object
-#' @export
 #' @examples
 #' m <- prcomp(mtcars, scale = T)
 #' pca_loadings_plot(m, components = c(1,2))
@@ -92,6 +91,57 @@ pca_loadings_plot <- function(obj, components = 1:3, sortby = 1, threshold = 0){
     ggplot2::facet_wrap(~PC) +
     ggplot2::ylab('') +
     ggplot2::theme_bw(15)
+}
+
+#' @title pca_biplot
+#' @description Create a ggplot biplot of a prcomp obj
+#' @param obj prcomp obj
+#' @param x PC for x-axis, Default: 'PC1'
+#' @param y PC for y-axis, Default: 'PC2'
+#' @param group A vector defining groups that will be color-coded
+#' @param threshold Only display variables with loadings exceeding this value, Default: 0
+#' @param alpha alpha level for points, Default: 1
+#' @param label_size text size, Default: 5
+#' @return ggplot obj
+#' @details Creates a ggplot obj from a prcomp obj. Use threshold to omit variables with small loadings
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  m <- prcomp(mtcars, scale. = T)
+#'  pca_biplot(m)
+#'  }
+#' }
+#' @rdname pca_biplot
+#' @export 
+pca_biplot <- function(obj, x="PC1", y="PC2", group = NULL, threshold = 0, alpha = 1, label_size = 5) {
+  df_obj <- data.frame(obj$x)
+  if (!is.null(group)) df_obj$group <- group
+  plot <- 
+    ggplot(df_obj, aes_string(x=x, y=y)) + 
+    geom_hline(aes(yintercept = 0), size=.2) + 
+    geom_vline(aes(xintercept = 0), size=.2)
+  
+  if (!is.null(group)){
+    plot <- plot + geom_point(alpha = alpha, aes(colour = group))
+  } else {
+    plot <- plot + geom_point(alpha = alpha)
+  }
+  
+  datapc <- data.frame(varnames=rownames(obj$rotation), obj$rotation[,c(x, y)])
+  datapc <- datapc[rowSums(abs(datapc[-1])>threshold)>0,] 
+  mult <- min(
+    (max(df_obj[,y]) - min(df_obj[,y])/(max(datapc[,y])-min(datapc[,y]))),
+    (max(df_obj[,x]) - min(df_obj[,x])/(max(datapc[,x])-min(datapc[,x])))
+  )
+  datapc <- transform(datapc,
+                      v1 = .7 * mult * (get(x)),
+                      v2 = .7 * mult * (get(y))
+  )
+  plot <- plot + 
+    coord_equal() + 
+    geom_text(data=datapc, aes(x=v1, y=v2, label=varnames), size = label_size, vjust=1, color="red") + 
+    geom_segment(data=datapc, aes(x=0, y=0, xend=v1, yend=v2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="red")
+  plot + theme_minimal()
 }
 
 #' @title tjurD
