@@ -96,46 +96,65 @@ pca_loadings_plot <- function(obj, components = 1:3, sortby = 1, threshold = 0){
 #' @title pca_biplot
 #' @description Create a ggplot biplot of a prcomp obj
 #' @param obj prcomp obj
-#' @param x PC for x-axis, Default: 'PC1'
-#' @param y PC for y-axis, Default: 'PC2'
-#' @param group A vector defining groups that will be color-coded
+#' @param components The PCs to plot, specified as a numeric vector of length 2, Default: c(1, 2)
+#' @param data Optional data frame with the same number of rows as that used to compute pca, Default: NULL
 #' @param threshold Only display variables with loadings exceeding this value, Default: 0
-#' @param alpha alpha level for points, Default: 1
-#' @param label_size text size, Default: 5
+#' @param label_size text size of the eigenvector labels, Default: 5
+#' @param geom_point whether to add geom_point to plot, Default: T
 #' @return ggplot obj
-#' @details Creates a ggplot obj from a prcomp obj. Use threshold to omit variables with small loadings
+#' @details Creates a ggplot obj from a prcomp obj. Use threshold to omit variables with small loadings. Add a data frame to create a more complex ggplot. Possibly set geom_point=F to add a geom_point with custom aesthetics.
 #' @examples 
 #' \dontrun{
 #' if(interactive()){
 #'  m <- prcomp(mtcars, scale. = T)
 #'  pca_biplot(m)
+#'  pca_biplot(m, data = mtcars, geom_point=F) + geom_point(aes(size = mpg))
 #'  }
 #' }
 #' @rdname pca_biplot
 #' @export 
-pca_biplot <- function(obj, x="PC1", y="PC2", group = NULL, threshold = 0, alpha = 1, label_size = 5) {
-  df_obj <- data.frame(obj$x)
-  if (!is.null(group)) df_obj$group <- group
-  plot <- 
-    ggplot(df_obj, aes_string(x=x, y=y)) + 
-    geom_hline(aes(yintercept = 0), size=.2) + 
-    geom_vline(aes(xintercept = 0), size=.2)
+pca_biplot <- function(obj, components = c(1,2), data = NULL, threshold = 0, label_size = 5, geom_point=T) {
   
-  if (!is.null(group)){
-    plot <- plot + geom_point(alpha = alpha, aes(colour = group))
+  if (class(obj) != 'prcomp') stop('obj class must be prcomp')
+  if (length(components) != 2 | mode(components) != 'numeric') stop('components is not a numeric vector of length 2')
+  if (max(components > ncol(obj$x)) | min(components) < 1) stop(paste('components must be between 1 and ', num_pc))
+  
+  pcs <- colnames(obj$x)
+  pcX <- pcs[components[1]]
+  pcY <- pcs[components[2]]
+  
+  if (!is.null(data)){
+    if (!'data.frame' %in% class(data)) stop('data must be a data frame')
+    if (nrow(data) != nrow(obj$x)) stop('the number of rows of data, ', nrow(data), ', does not equal the number of rows of x, ', nrow(obj$x))
+    if (pcX %in% names(data) | pcY %in% names(data)) stop(paste('data cannot contain variables', pcX, 'or', pcY))
+    data[pcX] <- obj$x[,pcX]
+    data[pcY] <- obj$x[,pcY]
   } else {
-    plot <- plot + geom_point(alpha = alpha)
+    data = data.frame(obj$x[,components])
   }
   
-  datapc <- data.frame(varnames=rownames(obj$rotation), obj$rotation[,c(x, y)])
+  pct_var <- paste0('(', round(100 * summary(obj)$importance[2,components], 1), '%)')
+  pct_var <- paste(colnames(obj$x)[components], pct_var)
+  
+  plot <- 
+    ggplot(data, aes_string(x=pcX, y=pcY)) + 
+    geom_hline(aes(yintercept = 0), size=.2) + 
+    geom_vline(aes(xintercept = 0), size=.2) +
+    labs(x = pct_var[1], y = pct_var[2])
+  
+  if (geom_point){
+    plot <- plot + geom_point()
+  }
+  
+  datapc <- data.frame(varnames=rownames(obj$rotation), obj$rotation[,components])
   datapc <- datapc[rowSums(abs(datapc[-1])>threshold)>0,] 
   mult <- min(
-    (max(df_obj[,y]) - min(df_obj[,y])/(max(datapc[,y])-min(datapc[,y]))),
-    (max(df_obj[,x]) - min(df_obj[,x])/(max(datapc[,x])-min(datapc[,x])))
+    (max(data[,pcY]) - min(data[,pcY])/(max(datapc[,pcY])-min(datapc[,pcY]))),
+    (max(data[,pcX]) - min(data[,pcX])/(max(datapc[,pcX])-min(datapc[,pcX])))
   )
   datapc <- transform(datapc,
-                      v1 = .7 * mult * (get(x)),
-                      v2 = .7 * mult * (get(y))
+                      v1 = .7 * mult * (get(pcX)),
+                      v2 = .7 * mult * (get(pcY))
   )
   plot <- plot + 
     coord_equal() + 
