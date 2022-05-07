@@ -1,6 +1,6 @@
 Package: hagenutils
 Title: Plots, tables, and inlines for knitr
-Version: 0.2.5
+Version: 0.2.6
 Authors@R: person("Ed", "Hagen", email = "ehagen@gmail.com", role = c("aut", "cre"))
 Description: forestplot: creates a ggplot forestplot object and corresponding
     data frame of coefficients that can be included in rmarkdown using kable.

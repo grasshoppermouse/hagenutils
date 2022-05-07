@@ -156,11 +156,11 @@ pca_biplot <- function(obj, components = c(1,2), data = NULL, threshold = 0, lab
                       v1 = .7 * mult * (get(pcX)),
                       v2 = .7 * mult * (get(pcY))
   )
-  plot <- plot + 
+  plot + 
     coord_equal() + 
     geom_text(data=datapc, aes(x=v1, y=v2, label=varnames), size = label_size, vjust=1, color="red") + 
-    geom_segment(data=datapc, aes(x=0, y=0, xend=v1, yend=v2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="red")
-  plot + theme_minimal()
+    geom_segment(data=datapc, aes(x=0, y=0, xend=v1, yend=v2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="red") +
+    theme_minimal()
 }
 
 #' @title tjurD
@@ -811,4 +811,37 @@ model_stats <- function(...){
   nms <- names(models)
   if (is.null(nms) | "" %in% nms) stop('all models must be named, e.g., m1 = m, ...')
   map(models, tdy)
+}
+
+#' @title twittersize
+#' @description Add borders to an image to force an aspect ratio for twitter post, and write it out in png format. Does not resize original image.
+#' @param path Path to image file
+#' @param out_prefix Prepend to name of output image, Default = "twitter"
+#' @param border_color Border color, Default = "white"
+#' @param aspect_ratio Desired aspect ratio, Default = "16:9" (single image in tweet). Use "7:8" if tweeting two images.
+#' @return path to output image
+#' @export
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'  twittersize('~/Desktop/image.png')
+#'  }
+#' }
+twittersize <- function(path, aspect_ratio = "16:9", out_prefix = "twitter ", border_color = 'white'){
+  ar <- as.numeric(strsplit(aspect_ratio, ':')[[1]])
+  width <- ar[1]
+  height <- ar[2]
+  img <- magick::image_read(path)
+  info <- magick::image_info(img)
+  if (info$width > width*info$height/height){
+    border_height <- round(((height*info$width/width) - info$height)/2)
+    geometry <- paste0("0x", border_height)
+  } else {
+    border_width <- round(((width*info$height/height) - info$width)/2)
+    geometry <- paste0(border_width, 'x0')
+  }
+  img <- magick::image_border(img, geometry = geometry, color = border_color)
+  fn <- paste0(out_prefix, basename(tools::file_path_sans_ext(path)), '.png')
+  path_out <- file.path(dirname(path), fn)
+  magick::image_write(img, path = path_out, format = "png")
 }
