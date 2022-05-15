@@ -182,8 +182,9 @@ pca_biplot <- function(obj, components = c(1,2), data = NULL, threshold = 0, lab
 #' @importFrom ggplot2 ggplot aes geom_histogram facet_wrap
 tjurD <- function(m){
   y <- m$model[[1]] # Outcome var
+  v <- sort(unique(y)) # binary levels of y
   probs <- m$fitted.values
-  rsq <- mean(probs[y == 1]) - mean(probs[y == 0])
+  rsq <- mean(probs[y == v[2]]) - mean(probs[y == v[1]])
   df <- data.frame(
     Probability = probs,
     y = y
