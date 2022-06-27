@@ -427,3 +427,29 @@ fmt_terms <- function(models, str = "$\\beta={signif(estimate, 2)}$ ({signif(con
   }
   map(models, tdy)
 }
+
+#' @title renumber_tweets
+#' @description Replace #. with sequential numbering (e.g., 1., 2.,)
+#' @param fn file name of markdown file
+#' @return Writes to the input file, fn!
+#' @details Use when composing twitter thread in markdown. Number tweets with #. placeholder.
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  renumber_tweets("thread.md")
+#'  }
+#' }
+#' @rdname renumber_tweets
+#' @export 
+
+renumber_tweets <- function(fn){
+  f <- readr::read_lines(fn)
+  n = 1
+  for (i in 1:length(f)){
+    if (stringr::str_starts(f[i], "(\\d+\\. )|(#\\. )")){
+      f[i] <- stringr::str_replace(f[i], "(\\d+\\. )|(#\\. )", paste0(n, ". "))
+      n <- n+1
+    }
+  }
+  readr::write_lines(f, fn)
+}
