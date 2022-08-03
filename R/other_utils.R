@@ -29,6 +29,23 @@ predicted_prob = function(mod, df){
   )
 }
 
+cohen_d <- function(x, ...) UseMethod("cohen_d")
+
+cohen_d.default <- function(x, y, sig = 3, ...){
+  if (!mode(x) %in% c('integer', 'numeric')) stop('x must be a numeric variable')
+  if (!mode(y) %in% c('integer', 'numeric')) stop('y must be a numeric variable')
+  
+  x <- na.omit(x)
+  nx <- length(x)
+  if (nx < 2) stop("x must have 2 or more non-missing values")
+  
+  y <- na.omit(y)
+  ny <- length(y)
+  if (ny < 2) stop("y must have 2 or more non-missing values")
+  
+  signif((mean(x) - mean(y))/sqrt(((nx-1)*sd(x)^2 + (ny-1)*sd(y)^2)/(sum(nx, ny)-2)), sig)
+}
+
 #' Cohen's d
 #'
 #' @param f A two-sided formula: y ~ x.
@@ -37,19 +54,16 @@ predicted_prob = function(mod, df){
 #' @examples
 #' cohen_d(mpg ~ am, mtcars)
 #' @export 
-cohen_d = function(f, data, sig = 3){
+cohen_d.formula = function(f, data, ...){
+  
   mf <- model.frame(f, data = data)
   if (ncol(mf) != 2) stop('Formula must contain only 2 variables: y ~ x')
-  mf[[2]] <- c(mf[[2]]) # convert factors to regular vectors
-  if (length(table(mf[[2]])) != 2) stop('factor must have exactly two values')
+  facs <- unique(mf[[2]])
+  if (length(facs) != 2) stop('factor must have exactly two values')
   if (!mode(mf[[1]]) %in% c('integer', 'numeric')) stop('Left hand side must be a numeric variable')
-  names(mf) <- c('y', 'x')
-  x <-
-    mf %>% 
-    group_by(x) %>% 
-    summarise(n = n(), mean = mean(y, na.rm = T), sd2 = sd(y, na.rm = T)^2)
-  d <- (x$mean[1] - x$mean[2])/sqrt(((x$n[1]-1)*x$sd2[1] + (x$n[2]-1)*x$sd2[2])/(sum(x$n)-2))
-  return(signif(d, sig))
+  v1 <- mf[[1]][mf[[2]]==facs[1]]
+  v2 <- mf[[1]][mf[[2]]==facs[2]]
+  do.call("cohen_d", list(v1, v2, ...))
 }
 
 #' pca_loadings_plot
