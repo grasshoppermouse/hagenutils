@@ -323,7 +323,7 @@ custom.summarize = function(df, vars, facvar=NULL, statscol=T, test_type='wilcox
       stringsAsFactors = F, 
       check.names = F
     )
-    row.names(d) = NULL
+    row.names(d) <- NULL
     return(d)
   }
 

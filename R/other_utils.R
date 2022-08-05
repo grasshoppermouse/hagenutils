@@ -609,26 +609,22 @@ regressiontable <- function(models, caption = NULL, sigfig = 3){
   }
   
   tidy2 <- function(m){
+    x <- broom::tidy(m, conf.int = T)
     if (class(m)[1] == 'lmerModLmerTest'){
-      x <- broom::tidy(m, conf.int = T)
       x <- x[x$effect == 'fixed',]
       x$effect <- NULL
       x$group <- NULL
       x$df <- NULL
-      return(x)
-    } else {
-      return(broom::tidy(m, conf.int = T))
     }
+    return(x)
   }
   
   glance2 <- function(m){
+    x <- broom::glance(m)
     if (class(m)[1] == 'lmerModLmerTest'){
-      x <- broom::glance(m)
       x$nobs <- nobs(m)
-      return(x)
-    } else {
-      return(broom::glance(m))
-    }
+    } 
+    return(x)
   }
   
   model_stats <- purrr::map_df(models, ~tidy2(.), .id = 'Model')
@@ -642,17 +638,22 @@ regressiontable <- function(models, caption = NULL, sigfig = 3){
   
   model_summaries <-
     purrr::map(models, ~stringr::str_glue_data(signif(glance2(.), sigfig), glue_dict[class(.)[1]]))
-  
-  model_stats %>%
+  names(model_summaries) <- names(models)
+
+  thetable <- model_stats %>%
     gt::gt(groupname_col = 'Model', caption = caption) %>%
     gt::cols_label(Variable = '') %>% 
     gt::fmt_number(c(3:5, 7:8), n_sigfig = sigfig) %>%
     gt::fmt_scientific(6, decimals = 1) %>% 
-    gt::tab_footnote(model_summaries, gt::cells_row_groups()) %>% 
     gt::tab_style(
       style = gt::cell_text(indent = gt::px(40)),
       locations = gt::cells_body(columns = 'Variable')
     )
+  
+  for(i in 1:length(model_summaries)){
+    thetable <- gt::tab_footnote(thetable, model_summaries[[i]], location=gt::cells_row_groups(groups = names(model_summaries[i])))
+  }
+  return(thetable)
 }
 
 #' @title ggmediation
