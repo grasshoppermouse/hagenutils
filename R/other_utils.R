@@ -643,8 +643,9 @@ regressiontable <- function(models, caption = NULL, sigfig = 3){
   thetable <- model_stats %>%
     gt::gt(groupname_col = 'Model', caption = caption) %>%
     gt::cols_label(Variable = '') %>% 
-    gt::fmt_number(c(3:5, 7:8), n_sigfig = sigfig) %>%
-    gt::fmt_scientific(6, decimals = 1) %>% 
+    gt::fmt(columns = 3, fns = function(x) signif(x, sigfig)) %>% 
+    gt::fmt_number(columns = c(4:5, 7:8), n_sigfig = sigfig) %>%
+    gt::fmt_scientific(columns = 6, decimals = 1) %>%
     gt::tab_style(
       style = gt::cell_text(indent = gt::px(40)),
       locations = gt::cells_body(columns = 'Variable')
