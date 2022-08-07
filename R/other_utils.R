@@ -74,13 +74,16 @@ cohen_d.formula = function(f, data, ...){
 #' @param obj Output of prcomp
 #' @param components A numeric vector of components to plot
 #' @param sortby Sort variables by loadings on this component (index to component vector)
+#' @param threshold Remove variables with sum(abs(loadings)) below threshold (default=0)
+#' @param reverse Vector of components that will be multiplied by -1
 #' @return ggplot object
 #' @examples
 #' m <- prcomp(mtcars, scale = T)
 #' pca_loadings_plot(m, components = c(1,2))
 #' @export 
-pca_loadings_plot <- function(obj, components = 1:3, sortby = 1, threshold = 0){
+pca_loadings_plot <- function(obj, components = 1:3, sortby = 1, threshold = 0, reverse=NULL){
   require(dplyr)
+  if (!all(reverse %in% components)) stop("reverse vector must be a subset of components vector")
   pca_summ <- summary(obj)
   comp_nms <- colnames(pca_summ$importance)
   varprop <- pca_summ$importance[2,components] # Get % variance
@@ -91,6 +94,8 @@ pca_loadings_plot <- function(obj, components = 1:3, sortby = 1, threshold = 0){
   loadings <- 
     obj$rotation[,components, drop = F] %>%
     data.frame
+  
+  if(!is.null(reverse)) loadings[reverse] <- -loadings[reverse]
   
   loadings <- loadings[rowSums(abs(loadings)>threshold)>0,] 
   
@@ -113,6 +118,7 @@ pca_loadings_plot <- function(obj, components = 1:3, sortby = 1, threshold = 0){
 #' @param components The PCs to plot, specified as a numeric vector of length 2, Default: c(1, 2)
 #' @param data Optional data frame with the same number of rows as that used to compute pca, Default: NULL
 #' @param threshold Only display variables with loadings exceeding this value, Default: 0
+#' @param reverse Vector of components that will be multiplied by -1
 #' @param label_size text size of the eigenvector labels, Default: 5
 #' @param geom_point whether to add geom_point to plot, Default: T
 #' @return ggplot obj
@@ -127,13 +133,19 @@ pca_loadings_plot <- function(obj, components = 1:3, sortby = 1, threshold = 0){
 #' }
 #' @rdname pca_biplot
 #' @export 
-pca_biplot <- function(obj, components = c(1,2), data = NULL, threshold = 0, label_size = 5, geom_point=T) {
+pca_biplot <- function(obj, components = c(1,2), data = NULL, threshold = 0, reverse=NULL, label_size = 5, geom_point=T) {
   
   if (class(obj) != 'prcomp') stop('obj class must be prcomp')
   if (length(components) != 2 | mode(components) != 'numeric') stop('components is not a numeric vector of length 2')
   if (max(components > ncol(obj$x)) | min(components) < 1) stop(paste('components must be between 1 and ', num_pc))
+  if (!all(reverse %in% components)) stop("reverse vector must be a subset of components vector")
   
   pcs <- colnames(obj$x)
+  if (!is.null(reverse)){
+    obj$x[,reverse] <- -obj$x[,reverse]
+    obj$rotation[,reverse] <- -obj$rotation[,reverse]
+  }
+  
   pcX <- pcs[components[1]]
   pcY <- pcs[components[2]]
   
