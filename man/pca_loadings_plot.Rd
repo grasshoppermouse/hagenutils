@@ -4,7 +4,13 @@
 \alias{pca_loadings_plot}
 \title{pca_loadings_plot}
 \usage{
-pca_loadings_plot(obj, components = 1:3, sortby = 1, threshold = 0)
+pca_loadings_plot(
+  obj,
+  components = 1:3,
+  sortby = 1,
+  threshold = 0,
+  reverse = NULL
+)
 }
 \arguments{
 \item{obj}{Output of prcomp}
@@ -12,6 +18,10 @@ pca_loadings_plot(obj, components = 1:3, sortby = 1, threshold = 0)
 \item{components}{A numeric vector of components to plot}
 
 \item{sortby}{Sort variables by loadings on this component (index to component vector)}
+
+\item{threshold}{Remove variables with sum(abs(loadings)) below threshold (default=0)}
+
+\item{reverse}{Vector of components that will be multiplied by -1}
 }
 \value{
 ggplot object

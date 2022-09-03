@@ -6,8 +6,8 @@
 \usage{
 fmt_terms(
   models,
- 
-    str = "$\\\\beta={signif(estimate, 2)}$ ({signif(conf.low, 2)}, {signif(conf.high, 2)})"
+  str =
+    "$\\\\beta={signif(estimate, 2)}$ ({signif(conf.low, 2)}, {signif(conf.high, 2)})"
 )
 }
 \arguments{

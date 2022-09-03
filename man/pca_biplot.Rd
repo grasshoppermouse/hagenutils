@@ -9,6 +9,7 @@ pca_biplot(
   components = c(1, 2),
   data = NULL,
   threshold = 0,
+  reverse = NULL,
   label_size = 5,
   geom_point = T
 )
@@ -21,6 +22,8 @@ pca_biplot(
 \item{data}{Optional data frame with the same number of rows as that used to compute pca, Default: NULL}
 
 \item{threshold}{Only display variables with loadings exceeding this value, Default: 0}
+
+\item{reverse}{Vector of components that will be multiplied by -1}
 
 \item{label_size}{text size of the eigenvector labels, Default: 5}
 

@@ -380,6 +380,91 @@ custom.summarize = function(df, vars, facvar=NULL, statscol=T, test_type='wilcox
   return(d)
 }
 
+#' @title summaryTable
+#' @description Provides summary stats for a data frame, possibly by a two-level factor
+#' @param d Data frame
+#' @param vars Named vector. Names are variables to summarize, values are human readable versions., Default: NULL
+#' @param fac Character value of grouping variable, Default: NULL
+#' @param statscols Include Cohen's d and a Mann-Whitney test if a fac is provided, Default: T
+#' @param sigfigs Number of significant figures to report, Default: 2
+#' @return Either a single kable object, or a list of two kable objects
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  summaryTable(mtcars, fac="am", vars = c(mpg="Miles per gallon", hp="Horsepower"))
+#'  }
+#' }
+#' @seealso 
+#'  \code{\link[dplyr]{select}}
+#'  \code{\link[tibble]{tibble}}
+#'  \code{\link[glue]{glue}}
+#'  \code{\link[purrr]{map}}
+#'  \code{\link[knitr]{kable}}
+#'  \code{\link[kableExtra]{add_header_above}}
+#' @rdname summaryTable
+#' @export 
+#' @importFrom dplyr select
+#' @importFrom tibble tibble
+#' @importFrom glue glue
+#' @importFrom purrr map map_dfr
+#' @importFrom knitr kable
+#' @importFrom kableExtra add_header_above
+summaryTable <- function(d, vars=NULL, fac=NULL, statscols=T, sigfigs=2){
+  require(dplyr)
+  
+  numeric_only <- function(d){
+    d <- 
+      d %>% 
+      dplyr::select(where(is.numeric))
+    if (!is.null(vars)){
+      d <- d[names(vars)]
+      names(d) <- vars
+    }
+    return(d)
+  }
+  
+  statsummary <- function(v, sigfigs){
+    v <- na.omit(v)
+    tibble::tibble(
+      N = length(v),
+      Range = glue::glue('{signif(min(v), sigfigs)}-{signif(max(v), sigfigs)}'),
+      `Mean (SD)` = glue::glue('{signif(mean(v), sigfigs)} ({signif(sd(v), sigfigs)})'),
+    )
+  }
+  
+  if (!is.null(fac)){
+    facs <- sort(as.character(unique(d[[fac]])))
+    if (length(facs) != 2) stop('fac must have exactly two unique values')
+    dfs <- split(d, d[fac])[facs] # Make sure order in dfs is same as facs
+  } else {
+    dfs <- list(d)
+  }
+  
+  dfs <- map(dfs, numeric_only)
+  
+  thesummary <- purrr::map(
+    dfs,
+    ~purrr::map_dfr(.x, ~statsummary(.x, sigfigs), .id = 'Variable')
+  )
+  
+  if (!is.null(fac) & statscols){
+    thestats <- map2_dfr(dfs[[1]], dfs[[2]], ~cohen_d.default(.x, .y, test=T, sig=sigfigs), .id = 'Variable')
+    thesummary[[2]] <- left_join(thesummary[[2]], thestats)[-1]
+  }
+  
+  if (is.null(fac)){
+    return(knitr::kable(thesummary[[1]]))
+  } else {
+    header1 <- setNames(c(1, 3), c(" ", facs[1]))
+    header2 <- setNames(c(3, 2), c(facs[2], " "))
+    tables <- list(
+      knitr::kable(thesummary[[1]]) %>% kableExtra::add_header_above(header1),
+      knitr::kable(thesummary[[2]]) %>% kableExtra::add_header_above(header2)
+    )
+    return(tables)
+  }
+}
+
 #' @title fmt_sci
 #' @description Generate latex for scientific notation
 #' @param x Numeric vector to be formatted

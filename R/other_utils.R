@@ -31,7 +31,7 @@ predicted_prob = function(mod, df){
 
 cohen_d <- function(x, ...) UseMethod("cohen_d")
 
-cohen_d.default <- function(x, y, sig = 3, ...){
+cohen_d.default <- function(x, y, test=F, sig = 3, ...){
   if (!mode(x) %in% c('integer', 'numeric')) stop('x must be a numeric variable')
   if (!mode(y) %in% c('integer', 'numeric')) stop('y must be a numeric variable')
   
@@ -43,13 +43,21 @@ cohen_d.default <- function(x, y, sig = 3, ...){
   ny <- length(y)
   if (ny < 2) stop("y must have 2 or more non-missing values")
   
-  signif((mean(x) - mean(y))/sqrt(((nx-1)*sd(x)^2 + (ny-1)*sd(y)^2)/(sum(nx, ny)-2)), sig)
+  d <- signif((mean(x) - mean(y))/sqrt(((nx-1)*sd(x)^2 + (ny-1)*sd(y)^2)/(sum(nx, ny)-2)), sig)
+  if (test){
+    p.value <- suppressWarnings(wilcox.test(x, y)$p.value)
+    p.value <- signif(p.value, sig)
+    return(list(d=d, 'p-value'=p.value))
+  }
+  return(d)
 }
 
 #' Cohen's d
 #'
 #' @param f A two-sided formula: y ~ x.
 #' @param d A data frame.
+#' @param test Whether to include a Wilcoxon (Mann-Whitney) test of location difference (default: F)
+#' @param sig The number of significant digits to report (default: 3)
 #' @return Cohen's d
 #' @examples
 #' cohen_d(mpg ~ am, mtcars)
