@@ -99,9 +99,11 @@ pca_loadings_plot <- function(obj, components = 1:3, sortby = 1, threshold = 0, 
   varprop <- paste0(nms, ' (', round(varprop*100, 1), '%)')
   names(varprop) <- nms
   
+  pcs <- colnames(obj$rotation)[components]
   loadings <- 
-    obj$rotation[,components, drop = F] %>%
-    data.frame
+    obj$rotation[,components, drop = F] %*% diag(obj$sdev[components]) %>%
+    data.frame %>% 
+    setNames(pcs)
   
   if(!is.null(reverse)) loadings[reverse] <- -loadings[reverse]
   
