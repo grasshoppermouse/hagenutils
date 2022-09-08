@@ -119,7 +119,7 @@ pca_loadings_plot <- function(obj, components = 1:3, sortby = 1, threshold = 0, 
     ggplot2::scale_color_gradient2(low = viridisLite::magma(11)[8], mid = 'white', 'high' = viridisLite::magma(11)[4]) +
     ggplot2::geom_vline(xintercept = 0) +
     ggplot2::facet_wrap(~PC) +
-    ggplot2::ylab('') +
+    ggplot2::labs(x = '\nStandardized loadings', y = '') +
     ggplot2::theme_bw(15)
 }
 
