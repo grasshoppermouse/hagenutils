@@ -114,8 +114,9 @@ pca_loadings_plot <- function(obj, components = 1:3, sortby = 1, threshold = 0, 
     tidyr::gather(key = PC, value = Loading, -Variable) %>%
     dplyr::mutate(PC = varprop[PC]) %>%
     ggplot2::ggplot() +
-    ggalt::geom_lollipop(ggplot2::aes(Loading, Variable, colour = Loading), size = 1, horizontal = T) +
-    ggplot2::scale_color_gradient2(low = 'red', mid = 'white', 'high' = 'blue') +
+    ggplot2::geom_segment(ggplot2::aes(x=0, xend=Loading, y=Variable, yend=Variable, colour = Loading), size=2) +
+    ggplot2::geom_point(ggplot2::aes(x=Loading, y=Variable, colour = Loading), size=3) +
+    ggplot2::scale_color_gradient2(low = viridisLite::magma(11)[8], mid = 'white', 'high' = viridisLite::magma(11)[4]) +
     ggplot2::geom_vline(xintercept = 0) +
     ggplot2::facet_wrap(~PC) +
     ggplot2::ylab('') +
