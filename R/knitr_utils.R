@@ -409,7 +409,7 @@ custom.summarize = function(df, vars, facvar=NULL, statscol=T, test_type='wilcox
 #' @importFrom purrr map map_dfr
 #' @importFrom knitr kable
 #' @importFrom kableExtra add_header_above
-summaryTable <- function(d, vars=NULL, fac=NULL, statscols=T, sigfigs=2){
+summaryTable <- function(d, vars=NULL, fac=NULL, statscols=T, sigfigs=2, ...){
   require(dplyr)
   
   numeric_only <- function(d){
@@ -453,13 +453,13 @@ summaryTable <- function(d, vars=NULL, fac=NULL, statscols=T, sigfigs=2){
   }
   
   if (is.null(fac)){
-    return(knitr::kable(thesummary[[1]]))
+    return(knitr::kable(thesummary[[1]], ...))
   } else {
     header1 <- setNames(c(1, 3), c(" ", facs[1]))
     header2 <- setNames(c(3, 2), c(facs[2], " "))
     tables <- list(
-      knitr::kable(thesummary[[1]]) %>% kableExtra::add_header_above(header1),
-      knitr::kable(thesummary[[2]]) %>% kableExtra::add_header_above(header2)
+      knitr::kable(thesummary[[1]], ...) %>% kableExtra::add_header_above(header1),
+      knitr::kable(thesummary[[2]], ...) %>% kableExtra::add_header_above(header2)
     )
     return(tables)
   }
