@@ -295,23 +295,24 @@ svysmooth2df <-
 #' @rdname ggdotchart
 #' @export
 ggdotchart <- function(v, threshold = NULL){
-  nms <- names(v)
-  d <- tibble(
-    x = as.numeric(v),
-    y = factor(nms, levels = nms[order(v)])
+  d <- tibble::tibble(
+    x = c(v), # remove table class
+    y = forcats::fct_reorder(names(v), v)
   ) 
   
   if (!is.null(threshold) & is.numeric(threshold)){
     d$threshold <- d$x > threshold
-    p <- ggplot(d, aes(x, y, colour = threshold, shape = threshold))
+    p <- ggplot2::ggplot(d, ggplot2::aes(x, y, colour = threshold, shape = threshold))
   } else {
-    p <- ggplot(d, aes(x, y))
+    p <- ggplot2::ggplot(d, ggplot2::aes(x, y))
   }
   
+  if (min(v) >= 0) p <- p + ggplot2::xlim(0, NA)
+  
   p +
-    geom_point(size = 3) +
-    labs(x = "", y = "") +
-    theme_minimal(15)
+    ggplot2::geom_point(size = 3) +
+    ggplot2::labs(x = "", y = "") +
+    ggplot2::theme_minimal(15)
 }
 
 #' @title scale_colour_binary
