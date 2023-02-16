@@ -14,7 +14,7 @@ forestplot(
   intercept = T,
   facet = T,
   dodgewidth = 0.3,
-  table = T,
+  draw = T,
   sig = 3
 )
 }
@@ -34,6 +34,8 @@ forestplot(
 \item{facet}{If TRUE, display models in different facets. Otherwise, distinguish by color.}
 
 \item{dodgewidth}{For position_dodge(). Default = 0.3.}
+
+\item{draw}{If TRUE draw the plot; otherwise return the data. Default TRUE}
 
 \item{sig}{The number of significant digits for the table.}
 }

@@ -10,6 +10,7 @@
 #' @param facet If TRUE, display models in different facets. Otherwise, distinguish by color.
 #' @param dodgewidth For position_dodge(). Default = 0.3.
 #' @param sig The number of significant digits for the table.
+#' @param draw If TRUE draw the plot; otherwise return the data. Default TRUE
 #' @return A ggplot object.
 #' @examples
 #' data(mtcars)
@@ -29,7 +30,7 @@ forestplot <- function(
     intercept=T,
     facet=T,
     dodgewidth = 0.3,
-    table = T,
+    draw = T,
     sig=3
     ){
 
@@ -72,7 +73,9 @@ forestplot <- function(
     }
 
     tidymodels$term = factor(tidymodels$term, levels=rev(names(varnames)), labels=rev(varnames))
-
+    
+    if (!draw) return(tidymodels)
+    
     if (facet){
       p <- 
         ggplot2::ggplot(tidymodels, ggplot2::aes(estimate, term, xmin=conf.low, xmax=conf.high)) +
