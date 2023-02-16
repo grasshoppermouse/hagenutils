@@ -818,7 +818,7 @@ ggxtabs <- function(xtab, cell_counts = F, stats = F, viridis_option = 'G', bord
 
 #' @title model_stats
 #' @description Return a named list of estimates, standard errors, and p-values for one or more regression models.
-#' @param ... Either a singal regression model object, or multiple named models, e.g., m1 = m1, m2 = m2, ...
+#' @param ... Either a single regression model object, or multiple named models, e.g., m1 = m1, m2 = m2, ...
 #' @return A named list of model parameters and statistics
 #' @details Uses the tidy functions from broom and broom.mixed to return a named list of model stats that can be easily used inline in rmarkdown documents.
 #' @examples 

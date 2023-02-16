@@ -25,8 +25,6 @@ forestplot(
 
 \item{varnames}{A named character vector. Each element is a human friendly version of the variable name, and each name is the original variable name.}
 
-\item{stats}{A named list of numeric vectors. The names are the names of the stats; the vectors are the stats to include in the table.}
-
 \item{odds.ratio}{If TRUE, apply exponential transform to coefficients and omit intercept.}
 
 \item{breaks}{An optional vector of breaks for the plot x-axis.}
@@ -37,12 +35,10 @@ forestplot(
 
 \item{dodgewidth}{For position_dodge(). Default = 0.3.}
 
-\item{table}{Return a table. Default = TRUE.}
-
 \item{sig}{The number of significant digits for the table.}
 }
 \value{
-A named list. $plot has the plot. $table has the data frame of coefficients and stats.
+A ggplot object.
 }
 \description{
 Create a forest plot and table of coefficients and stats from one or more regression models.
@@ -53,5 +49,5 @@ m1 <- lm(mpg ~ hp, mtcars)
 m2 <- lm(mpg ~ wt, mtcars)
 mnms <- c('MPG vs HP', 'MPG vs Weight')
 vnms <- c(mpg='Miles per gallon', hp='Horsepower', wt='Weight')
-out <- forestplot(m1, m2, modelsnames=mnms, varnames=vnms)
+forestplot(m1, m2, modelsnames=mnms, varnames=vnms)
 }

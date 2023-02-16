@@ -4,22 +4,20 @@
 #' @param ... One or more model objects.
 #' @param modelnames A character vector of names to label each plot and table column.
 #' @param varnames A named character vector. Each element is a human friendly version of the variable name, and each name is the original variable name.
-#' @param stats A named list of numeric vectors. The names are the names of the stats; the vectors are the stats to include in the table.
 #' @param odds.ratio If TRUE, apply exponential transform to coefficients and omit intercept.
 #' @param breaks An optional vector of breaks for the plot x-axis.
 #' @param intercept If TRUE, include the intercept in the table and plot; otherwise omit.
 #' @param facet If TRUE, display models in different facets. Otherwise, distinguish by color.
 #' @param dodgewidth For position_dodge(). Default = 0.3.
-#' @param table Return a table. Default = TRUE.
 #' @param sig The number of significant digits for the table.
-#' @return A named list. $plot has the plot. $table has the data frame of coefficients and stats.
+#' @return A ggplot object.
 #' @examples
 #' data(mtcars)
 #' m1 <- lm(mpg ~ hp, mtcars)
 #' m2 <- lm(mpg ~ wt, mtcars)
 #' mnms <- c('MPG vs HP', 'MPG vs Weight')
 #' vnms <- c(mpg='Miles per gallon', hp='Horsepower', wt='Weight')
-#' out <- forestplot(m1, m2, modelsnames=mnms, varnames=vnms)
+#' forestplot(m1, m2, modelsnames=mnms, varnames=vnms)
 #' @export 
 forestplot <- function(
     ...,
@@ -36,18 +34,13 @@ forestplot <- function(
     ){
 
     models <- list(...)
-    # Hack
-    if (class(models[[1]])=='list') models <- models[[1]]
-
-    tidymodels <- lapply(models, function(x) broom::tidy(x, conf.int=T))
 
     if (is.null(modelnames)){
-        modelnames = paste('Model', 1:length(models))
+      modelnames = paste('Model', 1:length(models))
     }
-
-    for (i in 1:length(tidymodels)) tidymodels[[i]]$model = modelnames[i]
-
-    tidymodels <- dplyr::bind_rows(tidymodels)
+    names(models) <- modelnames
+    
+    tidymodels <- purrr::list_rbind(purrr::map(models, function(x) broom::tidy(x, conf.int=T)), names_to = 'Model')
 
     if (odds.ratio){
         tidymodels$estimate <- exp(tidymodels$estimate)
@@ -78,24 +71,17 @@ forestplot <- function(
         names(varnames) <- varnames
     }
 
-    # Add nice varnames (append rows)
-    varnames <- c(varnames, Observations='Observations', AIC='AIC')
-
-    if (!is.null(stats)){
-      varnames <- c(varnames, names(stats))
-    }
-
     tidymodels$term = factor(tidymodels$term, levels=rev(names(varnames)), labels=rev(varnames))
 
     if (facet){
       p <- 
         ggplot2::ggplot(tidymodels, ggplot2::aes(estimate, term, xmin=conf.low, xmax=conf.high)) +
-        ggplot2::facet_wrap(~model, ncol = length(models))
+        ggplot2::facet_wrap(~Model, ncol = length(models))
         
     } else
     {
       p <- 
-        ggplot2::ggplot(tidymodels, ggplot2::aes(estimate, term, xmin=conf.low, xmax=conf.high, colour=model))
+        ggplot2::ggplot(tidymodels, ggplot2::aes(estimate, term, xmin=conf.low, xmax=conf.high, colour=Model))
     }
     
     p <- 
@@ -106,52 +92,6 @@ forestplot <- function(
       ggplot2::labs(y='', x=xlabel) +
       ggplot2::theme_bw()
 
-    # Create nice table of coefficients
-
-    if (table){
-      tidymodels2 <- tidymodels[c('model', 'term', 'estimate', 'conf.low', 'conf.high')]
-      tidymodels2[3:5] <- signif(tidymodels2[3:5], sig)
-      
-      # Creates character string with: "estimate (low, high)"
-      est <- function(estimate, lower, upper){
-        
-        return(
-          paste0(estimate, ' (', lower, ', ', upper, ')')
-        )
-      }
-      
-      tidymodels2$est <- mapply(est, tidymodels2$estimate, tidymodels2$conf.low, tidymodels2$conf.high)
-      tbl <- reshape2::dcast(tidymodels2, term~model, value.var='est')
-      tbl <- dplyr::arrange(tbl, -row_number()) # Reverse order of rows
-      tbl <- tbl[c('term', modelnames)] # put columns into same order as modelnames
-      
-      ### Add model stat rows to bottom of table ###
-      
-      # Observations
-      obs_row <- sapply(models, FUN=nobs)
-      tbl <- rbind(tbl, c('Observations', obs_row))
-      
-      # AIC
-      aic_row <- sapply(models, AIC)
-      
-      if (class(aic_row) == 'matrix') aic_row <- aic_row[2,] # To handle the svyglm case
-      aic_row <- signif(aic_row, sig+1) # Hack extra sig fig for AIC
-      tbl <- rbind(tbl, c('AIC', aic_row))
-      
-      # Optional stats
-      if (!is.null(stats)){
-        for (i in 1:length(stats)){
-          tbl <- rbind(tbl, c(names(stats)[i], stats[[i]]))
-        }
-        
-      }
-      
-      tbl[is.na(tbl)] <- '' # Blank the NA's
-      
-      return(
-        list(plot=p, table=tbl)
-      )
-    }
   return(p)
 }
 
@@ -164,7 +104,7 @@ forestplot <- function(
 #' @param odds.ratio If TRUE, apply exponential transform to coefficients and omit intercept.
 #' @param breaks An optional vector of breaks for the plot x-axis.
 #' @param intercept If TRUE, include the intercept in the table and plot; otherwise omit.
-#' @param sig The number of signficant digits for the table.
+#' @param sig The number of significant digits for the table.
 #' @return A named list. $plot has the plot. $table has the data frame of coefficients and stats.
 #' @examples
 #' data(mtcars)

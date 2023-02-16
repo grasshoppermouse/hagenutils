@@ -30,7 +30,7 @@ logistic_forestplot(
 
 \item{intercept}{If TRUE, include the intercept in the table and plot; otherwise omit.}
 
-\item{sig}{The number of signficant digits for the table.}
+\item{sig}{The number of significant digits for the table.}
 }
 \value{
 A named list. $plot has the plot. $table has the data frame of coefficients and stats.

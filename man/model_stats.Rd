@@ -7,7 +7,7 @@
 model_stats(...)
 }
 \arguments{
-\item{...}{Either a singal regression model object, or multiple named models, e.g., m1 = m1, m2 = m2, ...}
+\item{...}{Either a single regression model object, or multiple named models, e.g., m1 = m1, m2 = m2, ...}
 }
 \value{
 A named list of model parameters and statistics

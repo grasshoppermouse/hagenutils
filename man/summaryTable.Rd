@@ -4,7 +4,7 @@
 \alias{summaryTable}
 \title{summaryTable}
 \usage{
-summaryTable(d, vars = NULL, fac = NULL, statscols = T, sigfigs = 2)
+summaryTable(d, vars = NULL, fac = NULL, statscols = T, sigfigs = 2, ...)
 }
 \arguments{
 \item{d}{Data frame}
