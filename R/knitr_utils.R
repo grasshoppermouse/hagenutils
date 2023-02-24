@@ -358,8 +358,13 @@ summaryTable <- function(d, vars=NULL, fac=NULL, statscols=T, sigfigs=2, ...){
   numeric_only <- function(d){
     d <- 
       d %>% 
-      dplyr::select(where(is.numeric))
+      dplyr::select(where(~is.numeric(.x) | is.logical(.x)))
     if (!is.null(vars)){
+      vdiff <- paste(setdiff(names(vars), names(d)), collapse = ' ')
+      print(vdiff)
+      if (length(vdiff) > 0){
+        stop(glue::glue('These vars not numeric or logical: {vdiff}'))
+      }
       d <- d[names(vars)]
       names(d) <- vars
     }
