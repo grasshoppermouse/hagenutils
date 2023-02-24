@@ -360,9 +360,9 @@ summaryTable <- function(d, vars=NULL, fac=NULL, statscols=T, sigfigs=2, ...){
       d %>% 
       dplyr::select(where(~is.numeric(.x) | is.logical(.x)))
     if (!is.null(vars)){
-      vdiff <- paste(setdiff(names(vars), names(d)), collapse = ' ')
-      print(vdiff)
+      vdiff <- setdiff(names(vars), names(d))
       if (length(vdiff) > 0){
+        vdiff <- paste(vdiff, collapse = ' ')
         stop(glue::glue('These vars not numeric or logical: {vdiff}'))
       }
       d <- d[names(vars)]
