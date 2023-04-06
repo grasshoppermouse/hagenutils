@@ -558,12 +558,11 @@ hagenheat <- function(
   if (rev_col) col_order <- rev(col_order)
   
   if (scale. == 'row'){
-    d <- as_tibble(t(scale(t(d))))
+    d <- t(scale(t(d))[,1])
   } else if (scale. == 'column'){
-    d <- as_tibble(scale(d)) 
-  } else {
-    d <- as_tibble(d)
+    d <- scale(d)[,1]
   }
+  d <- as.data.frame(d)
   
   rwnms <- factor(rwnms, levels = rwnms[row_order])
   d <- dplyr::bind_cols(rowname=rwnms, d)
