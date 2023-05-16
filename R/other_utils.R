@@ -885,3 +885,22 @@ twittersize <- function(path, aspect_ratio = "16:9", out_prefix = "twitter ", bo
   path_out <- file.path(dirname(path), fn)
   magick::image_write(img, path = path_out, format = "png")
 }
+
+#' @title create_dict
+#' @description Print out a translation dictionary given a char vector of names
+#' @param v Character vector of names
+#' @return A printout out of a named vector template for a translation dictionary
+#' @details A printout out of a named vector template for a translation dictionary
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  create_dict(names(mtcars))
+#'  }
+#' }
+#' @rdname create_dict
+#' @export
+create_dict <- function(v){
+  cat("c(\n")
+  cat(paste0(' "', v, '" = ', '"",\n'))
+  cat(")")
+}
