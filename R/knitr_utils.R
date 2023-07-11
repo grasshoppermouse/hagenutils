@@ -84,7 +84,7 @@ forestplot <- function(
     } else
     {
       p <- 
-        ggplot2::ggplot(tidymodels, ggplot2::aes(estimate, term, xmin=conf.low, xmax=conf.high, colour=Model))
+        ggplot2::ggplot(tidymodels, ggplot2::aes(estimate, term, xmin=conf.low, xmax=conf.high, colour=Model, shape=Model))
     }
     
     p <- 
