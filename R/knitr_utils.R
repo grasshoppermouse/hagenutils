@@ -18,7 +18,7 @@
 #' m2 <- lm(mpg ~ wt, mtcars)
 #' mnms <- c('MPG vs HP', 'MPG vs Weight')
 #' vnms <- c(mpg='Miles per gallon', hp='Horsepower', wt='Weight')
-#' forestplot(m1, m2, modelsnames=mnms, varnames=vnms)
+#' forestplot(m1, m2, modelnames=mnms, varnames=vnms)
 #' @export 
 forestplot <- function(
     ...,
@@ -30,6 +30,8 @@ forestplot <- function(
     intercept=T,
     facet=T,
     dodgewidth = 0.3,
+    linewidth = 1,
+    size = 1,
     draw = T,
     sig=3
     ){
@@ -89,7 +91,7 @@ forestplot <- function(
     
     p <- 
       p +
-      ggplot2::geom_pointrange(position = position_dodge(width = dodgewidth)) +
+      ggplot2::geom_pointrange(size = size, linewidth = linewidth, position = position_dodge(width = dodgewidth)) +
       ggplot2::geom_vline(xintercept=intr, linetype='longdash') +
       scle +
       ggplot2::labs(y='', x=xlabel) +
