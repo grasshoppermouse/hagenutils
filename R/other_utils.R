@@ -256,18 +256,19 @@ tjurD <- function(m){
 #' m1 <- svysmooth(api00~ell,dclus1)
 #' m2 <- svysmooth(api00~ell,dclus2)
 #' df <- svysmooth2df(full = m1, subset = m2)
-svysmooth2df <-
-  function(...){
+svysmooth2df <- function(...){
 
     smooths <- list(...)
-    if(is.null(names(smooths))) stop("Each smooth must have a name")
+    if(is.null(names(smooths))){
+      names(smooths) <- paste('Smooth', 1:length(smooths))
+    }
 
     x <- purrr::map(smooths, list(1, 'x'))
     y <- purrr::map(smooths, list(1, 'y'))
     Smooth <- rep(names(smooths), times = purrr::map_int(x, length))
 
     df <-
-      tibble::data_frame(
+      tibble::tibble(
         purrr::flatten_dbl(x),
         purrr::flatten_dbl(y),
         Smooth
