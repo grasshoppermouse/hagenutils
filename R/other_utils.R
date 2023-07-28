@@ -905,3 +905,24 @@ create_dict <- function(v){
   cat(paste0(' "', v, '" = ', '"",\n'))
   cat(")")
 }
+
+
+#' @title reorder_levels
+#' @description Order factor levels based on a subset of values (e.g., only female values, or only male values)
+#' @param f Character vector used as a factor variable
+#' @param v Numeric vector used to order the factor levels
+#' @param index Vector used to divide f and v into exactly 2 groups (e.g., Males, Females)
+#' @param choice The value of index to use to (e.g., Female)
+#'
+#' @return An character vector to be used in the level argument of factor()
+#' @export
+#'
+#' @examples
+reorder_levels <- function(f, v, index, choice){
+  if (!is.character(f)) stop('f must be a character vector')
+  if (!is.numeric(v)) stop('v must be numeric')
+  indices <- unique(index)
+  if (length(indices) != 2) stop('index must have exactly 2 unique values')
+  if (!setequal(f[index == indices[1]], f[index == indices[2]])) stop("factor levels for each index value must be equal")
+  levels(forcats::fct_reorder(f[index == choice], v[index == choice]))
+}

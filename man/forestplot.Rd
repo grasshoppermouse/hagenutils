@@ -14,6 +14,8 @@ forestplot(
   intercept = T,
   facet = T,
   dodgewidth = 0.3,
+  linewidth = 1,
+  size = 1,
   draw = T,
   sig = 3
 )
@@ -51,5 +53,5 @@ m1 <- lm(mpg ~ hp, mtcars)
 m2 <- lm(mpg ~ wt, mtcars)
 mnms <- c('MPG vs HP', 'MPG vs Weight')
 vnms <- c(mpg='Miles per gallon', hp='Horsepower', wt='Weight')
-forestplot(m1, m2, modelsnames=mnms, varnames=vnms)
+forestplot(m1, m2, modelnames=mnms, varnames=vnms)
 }
