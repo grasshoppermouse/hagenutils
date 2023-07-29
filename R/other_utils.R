@@ -926,3 +926,29 @@ reorder_levels <- function(f, v, index, choice){
   if (!setequal(f[index == indices[1]], f[index == indices[2]])) stop("factor levels for each index value must be equal")
   levels(forcats::fct_reorder(f[index == choice], v[index == choice]))
 }
+
+#' @title joint_missingness
+#' @description Upset plot of missinging by combinations of variables
+#' @param d data frame
+#' @param ... Arguments passed on to upset function
+#' @return Upset plot
+#' @details Plot indicates number of missing cases for different combinations of variables
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  joint_missingness(airquality)
+#'  }
+#' }
+#' @seealso 
+#'  \code{\link[UpSetR]{upset}}
+#' @rdname joint_missingness
+#' @export 
+#' @importFrom dplyr mutate across
+#' @importFrom tidyselect everything
+#' @importFrom UpSetR upset
+joint_missingness <- function(d, ...){
+  d |>
+    data.frame() |>
+    dplyr::mutate(dplyr::across(tidyselect::everything(), \(x) as.integer(is.na(x)))) |>
+    UpSetR::upset(...)
+}
