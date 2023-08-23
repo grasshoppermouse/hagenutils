@@ -952,3 +952,18 @@ joint_missingness <- function(d, ...){
     dplyr::mutate(dplyr::across(tidyselect::everything(), \(x) as.integer(is.na(x)))) |>
     UpSetR::upset(...)
 }
+
+#' scale2
+#'
+#' @param x A numeric matrix(like object).
+#' @description For numeric vectors, returns a scaled numeric vector (not an array); otherwise returns scale(x)
+#' @return A scaled vector or matrix or array
+#' @export
+#'
+#' @examples
+#' x <- scale2(mtcars$mpg)
+#' class(x)
+scale2 <- function(x){
+  if(class(x) == 'numeric') return(c(scale(x)))
+  return(scale(x))
+}
