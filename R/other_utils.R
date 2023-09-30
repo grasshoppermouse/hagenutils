@@ -967,3 +967,29 @@ scale2 <- function(x){
   if(class(x) == 'numeric') return(c(scale(x)))
   return(scale(x))
 }
+
+# https://github.com/tidymodels/broom/issues/1096#issuecomment-1116921504
+tidy_svyglm <- function(x, conf.int = FALSE, conf.level = 0.95,
+                        exponentiate = FALSE, ddf = NULL, ...) {
+  ret <- as_tibble(summary(x, df.resid = ddf)$coefficients, rownames = "term")
+  colnames(ret) <- c("term", "estimate", "std.error", "statistic", "p.value")
+  
+  coefs <- tibble::enframe(stats::coef(x), name = "term", value = "estimate")
+  ret <- left_join(coefs, ret, by = c("term", "estimate"))
+  
+  if (conf.int) {
+    ci <- broom_confint_terms(x, level = conf.level, ddf = ddf, ...)
+    ret <- left_join(ret, ci, by = "term")
+  }
+  
+  if (exponentiate) {
+    ret <- exponentiate(ret)
+  }
+  
+  ret
+}
+
+environment(tidy_svyglm) <- asNamespace("broom")
+assignInNamespace("tidy.svyglm",
+                  value = tidy_svyglm,
+                  ns = "broom")

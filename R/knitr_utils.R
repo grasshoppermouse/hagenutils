@@ -33,7 +33,8 @@ forestplot <- function(
     linewidth = 1,
     size = 1,
     draw = T,
-    sig=3
+    sig=3,
+    ddf = NULL
     ){
 
     models <- list(...)
@@ -43,7 +44,11 @@ forestplot <- function(
     }
     names(models) <- modelnames
     
-    tidymodels <- purrr::list_rbind(purrr::map(models, function(x) broom::tidy(x, conf.int=T)), names_to = 'Model')
+    if (!is.null(ddf)){
+      tidymodels <- purrr::list_rbind(purrr::map(models, function(x) broom::tidy(x, conf.int=T, ddf=ddf)), names_to = 'Model')
+    } else {
+      tidymodels <- purrr::list_rbind(purrr::map(models, function(x) broom::tidy(x, conf.int=T)), names_to = 'Model')
+    }
 
     if (odds.ratio){
         tidymodels$estimate <- exp(tidymodels$estimate)
