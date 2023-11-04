@@ -916,8 +916,6 @@ create_dict <- function(v){
 #'
 #' @return An character vector to be used in the level argument of factor()
 #' @export
-#'
-#' @examples
 reorder_levels <- function(f, v, index, choice){
   if (!is.character(f)) stop('f must be a character vector')
   if (!is.numeric(v)) stop('v must be numeric')
@@ -993,3 +991,27 @@ environment(tidy_svyglm) <- asNamespace("broom")
 assignInNamespace("tidy.svyglm",
                   value = tidy_svyglm,
                   ns = "broom")
+
+#' @title dagitty2graph: Graph conversion from dagitty to tbl_graph
+#'
+#' @description Convert a dagitty object to a tbl_graph object.
+#' @param g A dagitty object ("dag" or "pdag").
+#' 
+#' @export
+#'
+#' @examples
+#' graph <- dagitty2graph(g)
+#'
+#' @return An tbl_graph object.
+dagitty2graph<- function(g) 
+{
+  
+  # nodes to data.frame
+  nodes <- data.frame(name = names(g))
+  
+  # edges to data.frame
+  edges0 <- dagitty::edges(g)
+  edges <- data.frame(from = edges0$v, to = edges0$w)
+  
+  as_tbl_graph(list(nodes = nodes, edges = edges), directed = TRUE)
+}

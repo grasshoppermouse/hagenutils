@@ -17,7 +17,8 @@ forestplot(
   linewidth = 1,
   size = 1,
   draw = T,
-  sig = 3
+  sig = 3,
+  ddf = NULL
 )
 }
 \arguments{

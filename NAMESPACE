@@ -3,6 +3,7 @@
 S3method(cohen_d,formula)
 export(create_dict)
 export(custom.summarize)
+export(dagitty2graph)
 export(fmt_sci)
 export(fmt_terms)
 export(forestplot)
