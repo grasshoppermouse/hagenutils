@@ -1015,3 +1015,31 @@ dagitty2graph<- function(g)
   
   as_tbl_graph(list(nodes = nodes, edges = edges), directed = TRUE)
 }
+
+insertInlineAddin <- function() {
+  rstudioapi::insertText("`{r} `")
+}
+
+#' @title signif2
+#' @description Convert numeric vector to character vector with specified number of significant digits, retaining trailing zeros
+#' @param x Numeric vector
+#' @param sigfigs Number of significant digits, Default: 2
+#' @param format 'g': use scientific notation when more compact; 'fg': numbers in xx.yy format, Default: 'g'
+#' @return Character vector of numbers formatted to the specified number of sigfigs
+#' @details Character and logical vectors are returned as is.
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  signif2(rnorm(10))
+#'  }
+#' }
+#' @rdname signif2
+#' @export 
+signif2 <- function(x, sigfigs=2, format="g"){
+  if (!is.numeric(x)) return(x) 
+  else {
+    out <- formatC(x, digits=sigfigs, format=format, flag="#")
+    out <- gsub("\\s*NA", "", out)
+    return(out)
+    }
+}
