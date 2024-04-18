@@ -1,0 +1,4 @@
+Name: Insert `{r} `
+Description: Inserts `{r} ` at the cursor position.
+Binding: insertInlineAddin
+Interactive: false

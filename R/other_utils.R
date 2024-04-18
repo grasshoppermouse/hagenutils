@@ -1036,10 +1036,13 @@ insertInlineAddin <- function() {
 #' @rdname signif2
 #' @export 
 signif2 <- function(x, sigfigs=2, format="g"){
-  if (!is.numeric(x)) return(x) 
-  else {
+  if (is.numeric(x)) {
     out <- formatC(x, digits=sigfigs, format=format, flag="#")
     out <- gsub("\\s*NA", "", out)
     return(out)
-    }
+  } else {
+    out <- as.character(x)
+    out[is.na(out)] <- ""
+    return(out)
+  }
 }
