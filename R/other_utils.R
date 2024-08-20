@@ -339,7 +339,7 @@ scale_colour_binary<- function(direction=1, ...){
   ggplot2::discrete_scale(
     "colour", "binary", 
     function(n){
-      if (n != 2) stop('custom binary palette provides exactly 2 colors')
+      if (n > 2) stop('custom binary palette provides only 2 colors')
       cols <- viridisLite::magma(11)[c(4,8)]
       if (direction >= 0) cols else rev(cols)
     }, 
