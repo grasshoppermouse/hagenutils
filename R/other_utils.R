@@ -195,7 +195,7 @@ pca_biplot <- function(obj, components = c(1,2), data = NULL, threshold = 0, rev
   )
   plot + 
     coord_equal() + 
-    ggrepel::geom_text_repel(data=datapc, aes(x=v1, y=v2, label=varnames), size = label_size, color="red") + 
+    ggrepel::geom_text_repel(data=datapc, aes(x=v1, y=v2, label=varnames), size = label_size, color="red", max.overlaps = Inf) + 
     geom_segment(data=datapc, aes(x=0, y=0, xend=v1, yend=v2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="red") +
     theme_minimal()
 }
