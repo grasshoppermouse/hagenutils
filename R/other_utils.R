@@ -1046,3 +1046,27 @@ signif2 <- function(x, sigfigs=2, format="g"){
     return(out)
   }
 }
+
+#' @title ggecdf
+#' @description Plot an ECDF curve with points colored by a second variable
+#' @param d A data frame
+#' @param var A character string identifying the variable to plot
+#' @param group A character string identifing the varible the point colors
+#' @return A ggplot
+#' @details This with plot an ECDF curve of var, with each point colored by group
+#' @examples 
+#' \dontrun{
+#' if(interactive()){
+#'  mtcars$cyl <- factor(mtcars$cyl)
+#'  ggecdf(mtcars, "mpg", "cyl")
+#'  }
+#' }
+#' @rdname ggecdf
+#' @export 
+ggecdf <- function(d, var, group){
+  d$ecdf <- ecdf(d[[var]])(d[[var]])
+  ggplot(d) +
+    stat_ecdf(aes(.data[[var]])) +
+    geom_point(data = d, aes(.data[[var]], ecdf, colour = .data[[group]]), size = 3) +
+    theme_minimal(15)
+}
